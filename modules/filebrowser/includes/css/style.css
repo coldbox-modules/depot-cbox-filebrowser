@@ -18,6 +18,9 @@
 #FileBrowser #titleBar #title{
     float: right;
 }
+#FileBrowser #uploadBar{
+	display:none; text-align:center; background-color:#ccc; padding:5px
+}
 #FileBrowser #loaderBar{
 	float:left;
 	margin: 7px 0px 0px 0px;	

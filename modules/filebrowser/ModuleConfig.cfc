@@ -80,7 +80,7 @@ The arguments you can use are:
 			// remove stuff
 			{pattern="/remove", handler="home",action="remove"},
 			// download
-			{pattern="/download/:path", handler="home",action="download"},
+			{pattern="/download", handler="home",action="download"},
 			// upload
 			{pattern="/upload", handler="home",action="upload"},
 			// traversal paths

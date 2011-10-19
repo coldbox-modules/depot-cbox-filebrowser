@@ -48,7 +48,7 @@
 		</div>
 
 		<!--- UploadBar --->
-		<div id="uploadBar" style="display:none;">
+		<div id="uploadBar">
 			#announceInterception("preUploadBar")#
 			<input id="file_upload" name="file_upload" type="file" />
 			#announceInterception("postUploadBar")#
@@ -218,7 +218,7 @@ function fbDownload(){
 	var sType = $selectedItemType.val();
 	if( !sPath.length || sType == "dir" ){ alert("Please select a file first."); return; }
 	// Trigger the download
-	$("##downloadIFrame").attr("src","#event.buildLink(prc.xehDownload)#/"+ escape(sPath) );
+	$("##downloadIFrame").attr("src","#event.buildLink(prc.xehDownload)#?path="+ escape(sPath) );
 }
 </cfif>
 <!--- CallBack --->
@@ -244,7 +244,7 @@ $(document).ready(function() {
 	sizeLimit	: #prc.settings.uploadify.sizeLimit#,
 	</cfif>
 	onAllComplete: function(event, data){
-		alert(data.filesUploaded + ' files uploaded successfully!');
+		//alert(data.filesUploaded + ' file(s) uploaded successfully!');
 		$("##uploadBar").slideUp();
 		fbRefresh();
 	}
