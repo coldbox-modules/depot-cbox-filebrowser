@@ -8,10 +8,11 @@ component output="false" hint="Main filebrowser module handler"{
 		var prc = event.getCollection(private=true);
 		// place root in prc and also module settings
 		prc.modRoot	 = event.getModuleRoot();
-		prc.settings = getModuleSettings("filebrowser").settings;
+		// we duplicate the settings so we can do overrides a-la-carte
+		prc.settings = duplicate( getModuleSettings("filebrowser").settings );
 	}
 	
-	function index(event,rc,prc){
+	function index(event,rc,prc,boolean widget=false){
 		// params
 		event.paramValue("path","");
 		event.paramValue("callback","");
@@ -23,6 +24,7 @@ component output="false" hint="Main filebrowser module handler"{
 		prc.xehRemove 		= "filebrowser/remove";
 		prc.xehDownload		= "filebrowser/download";
 		prc.xehUpload		= "filebrowser/upload";
+		prc.xehRename		= "filebrowser/rename";
 		
 		// Load CSS and JS only if not in Ajax Mode
 		if( NOT event.isAjax() ){
@@ -69,8 +71,13 @@ component output="false" hint="Main filebrowser module handler"{
 		// get directory listing.
 		prc.qListing = directoryList( prc.currentRoot, false, "query", prc.settings.extensionFilter, "asc");
 		
-		// view
-		event.setView(view="home/index",noLayout=event.isAjax());
+		// set view or widget?
+		if( arguments.widget ){
+			return renderView(view="home/index",module="filebrowser");
+		}
+		else{
+			event.setView(view="home/index",noLayout=event.isAjax());
+		}
 	}
 	
 	/**
@@ -203,6 +210,48 @@ component output="false" hint="Main filebrowser module handler"{
 		catch(Any e){
 			data.errors = true;
 			data.messages = "Error downloading file: #e.message# #e.detail#";
+			log.error(data.messages, e);
+		}
+		// render stuff out
+		event.renderData(data=data,type="json");
+	}
+	
+	/**
+	* rename
+	*/
+	function rename(event,rc,prc){
+		var data = {
+			errors = false,
+			messages = ""
+		};
+		// param value
+		event.paramValue("path","");
+		event.paramValue("name","");
+		
+		// clean incoming path and names
+		rc.path = URLDecode( trim( antiSamy.clean( rc.path ) ) );
+		rc.name = URLDecode( trim( antiSamy.clean( rc.name ) ) );
+		if( !len(rc.path) OR !len(rc.name) ){
+			data.errors = true;
+			data.messages = "The path and/or name sent are invalid!";
+			event.renderData(data=data,type="json");
+			return;
+		}
+		
+		// rename
+		try{
+			if( fileExists( rc.path ) ){
+				fileUtils.renameFile( rc.path, rc.name );
+			}
+			else if( directoryExists( rc.path ) ){
+				fileUtils.directoryRename( rc.path, rc.name );
+			}
+			data.errors = false;
+			data.messages = "'#rc.path#' renamed successfully!";
+		}
+		catch(Any e){
+			data.errors = true;
+			data.messages = "Error renaming: #e.message# #e.detail#";
 			log.error(data.messages, e);
 		}
 		// render stuff out

@@ -81,6 +81,8 @@ The arguments you can use are:
 			{pattern="/remove", handler="home",action="remove"},
 			// download
 			{pattern="/download", handler="home",action="download"},
+			// rename
+			{pattern="/rename", handler="home",action="rename"},
 			// upload
 			{pattern="/upload", handler="home",action="upload"},
 			// traversal paths

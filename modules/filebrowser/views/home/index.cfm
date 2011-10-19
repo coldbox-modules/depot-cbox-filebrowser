@@ -30,6 +30,9 @@
 			<a href="javascript:fbNewFolder()" title="Create Folder"><img src="#prc.modRoot#/includes/images/folder_new.png" border="0"></a>&nbsp;&nbsp;
 			</cfif>
 			
+			<!--- Rename --->
+			<a href="javascript:fbRename()" title="Rename File-Folder"><img src="#prc.modRoot#/includes/images/rename.png" border="0"></a>&nbsp;&nbsp;
+			
 			<!--- Delete --->
 			<cfif prc.settings.deleteStuff>
 			<a href="javascript:fbDelete()" title="Delete File-Folder"><img src="#prc.modRoot#/includes/images/cancel.png"  border="0"></a>&nbsp;&nbsp;
@@ -85,6 +88,8 @@
 						 onClick="fbSelect('#validIDName#','#JSStringFormat(plainURL)#')" 
 						 class="folders"
 						 data-type="dir"
+						 data-name="#prc.qListing.Name#"
+						 data-fullURL="#plainURL#"
 						 onDblclick="fbDrilldown('#JSStringFormat(plainURL)#')">
 						<a href="javascript:fbDrilldown('#JSStringFormat(plainURL)#')"><img src="#prc.modRoot#/includes/images/folder.png" border="0"  alt="Folder"></a>
 						#prc.qListing.name#
@@ -94,6 +99,8 @@
 					<div id="#validIDName#" 
 						 class="files"
 						 data-type="file"
+						 data-name="#prc.qListing.Name#"
+						 data-fullURL="#plainURL#"
 						 onClick="fbSelect('#validIDName#','#JSStringFormat(plainURL)#')">
 						<img src="#prc.modRoot#/includes/images/file.png" border="0"  alt="file">
 						#prc.qListing.name#
@@ -128,6 +135,7 @@
 			
 			<!--- Selected Item & Type --->
 			<input type="hidden" name="selectedItem" id="selectedItem" value="">
+			<input type="hidden" name="selectedItemID" id="selectedItemID" value="">
 			<input type="hidden" name="selectedItemType" id="selectedItemType" value="file">
 			
 			<!--- Cancel Button --->
@@ -151,6 +159,7 @@ $(document).ready(function() {
 	$fileBrowser 		= $("##FileBrowser");
 	$fileLoaderBar 		= $("##loaderBar");
 	$selectedItem		= $("##selectedItem");
+	$selectedItemID		= $("##selectedItemID");
 	$selectedItemType	= $("##selectedItemType");
 	selectedHistory = "";
 	$("##bt_select").attr("disabled",true);
@@ -177,12 +186,32 @@ function fbSelect(sID,sURL){
 	var $sItem = $( "##"+sID );
 	$sItem.addClass("selected");
 	$selectedItemType.val( $sItem.attr("data-type") );
+	$selectedItemID.val( $sItem.attr("id") );
 	// save selection
 	$selectedItem.val( sURL );
 	// history set
 	selectedHistory = sID;
 	// enable selection button
 	$("##bt_select").attr("disabled",false);
+}
+function fbRename(){
+	// check selection
+	var sPath = $selectedItem.val();
+	if( !sPath.length ){ alert("Please select a file-folder first."); return; }
+	
+	// get ID
+	var thisID 		= $selectedItemID.val();
+	var target 		= $("##"+thisID);
+	// prompt for new name
+	var newName  = prompt("Enter the new name?", target.attr("data-name") );
+	// do renaming if prompt not empty
+	if( newName != null){
+		$fileLoaderBar.slideDown();
+		$.post('#event.buildLink(prc.xehRename)#',{name:newName,path:target.attr("data-fullURL")},function(data){
+			if( data.errors ){ alert(data.messages); }
+			fbRefresh();
+		},"json");
+	}
 }
 <!--- Create Folders --->
 <cfif prc.settings.createFolders>
