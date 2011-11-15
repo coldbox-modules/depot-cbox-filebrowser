@@ -63,10 +63,11 @@ component output="false" hint="Main filebrowser module handler"{
 		prc.safeCurrentRoot = URLEncodedFormat( prc.currentRoot );
 
 		// traversal test
-		if( prc.settings.traversalSecurity AND NOT findNoCase(prc.currentRoot,prc.settings.directoryRoot) ){
+		if( prc.settings.traversalSecurity AND NOT findNoCase(prc.settings.directoryRoot, prc.currentRoot) ){
 			getPlugin("MessageBox").warn("Traversal security exception");
 			setNextEvent(prc.xehBrowser);
 		}
+
 
 		// get directory listing.
 		prc.qListing = directoryList( prc.currentRoot, false, "query", prc.settings.extensionFilter, "asc");
