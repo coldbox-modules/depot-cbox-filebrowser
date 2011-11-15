@@ -1,9 +1,9 @@
 component output="false" hint="Main filebrowser module handler"{
-	
+
 	// DI
 	property name="antiSamy"		inject="coldbox:plugin:AntiSamy";
 	property name="fileUtils"		inject="coldbox:plugin:FileUtils";
-	
+
 	function preHandler(event,currentAction){
 		var prc = event.getCollection(private=true);
 		// place root in prc and also module settings
@@ -11,13 +11,13 @@ component output="false" hint="Main filebrowser module handler"{
 		// we duplicate the settings so we can do overrides a-la-carte
 		prc.settings = duplicate( getModuleSettings("filebrowser").settings );
 	}
-	
+
 	function index(event,rc,prc,boolean widget=false){
 		// params
 		event.paramValue("path","");
 		event.paramValue("callback","");
 		event.paramValue("cancelCallback","");
-		
+
 		// exit handlers
 		prc.xehBrowser 		= "filebrowser/";
 		prc.xehNewFolder 	= "filebrowser/createfolder";
@@ -25,7 +25,7 @@ component output="false" hint="Main filebrowser module handler"{
 		prc.xehDownload		= "filebrowser/download";
 		prc.xehUpload		= "filebrowser/upload";
 		prc.xehRename		= "filebrowser/rename";
-		
+
 		// Load CSS and JS only if not in Ajax Mode
 		if( NOT event.isAjax() ){
 			addAsset("#prc.modRoot#/includes/css/style.css");
@@ -41,10 +41,10 @@ component output="false" hint="Main filebrowser module handler"{
 				addAsset("#prc.modRoot#/includes/uploadify/jquery.uploadify.v2.1.4.min.js");
 			}
 		}
-		
+
 		// Inflate flash params
 		inflateFlashParams(event,rc,prc);
-		
+
 		// clean incoming path
 		rc.path = URLDecode( trim( antiSamy.clean( rc.path ) ) );
 		// Store directory root
@@ -58,19 +58,19 @@ component output="false" hint="Main filebrowser module handler"{
 		}
 		prc.currentRoot = REReplace(prc.currentRoot,"(/|\\){1,}$","","all");
 		prc.currentRoot = REReplace(prc.currentRoot,"\\","/","all");
-		
+
 		// Do a safe current root
 		prc.safeCurrentRoot = URLEncodedFormat( prc.currentRoot );
-		
+
 		// traversal test
-		if( prc.settings.traversalSecurity AND NOT findNoCase(prc.settings.directoryRoot, prc.currentRoot) ){
+		if( prc.settings.traversalSecurity AND NOT findNoCase(prc.currentRoot,prc.settings.directoryRoot) ){
 			getPlugin("MessageBox").warn("Traversal security exception");
 			setNextEvent(prc.xehBrowser);
 		}
-		
+
 		// get directory listing.
 		prc.qListing = directoryList( prc.currentRoot, false, "query", prc.settings.extensionFilter, "asc");
-		
+
 		// set view or widget?
 		if( arguments.widget ){
 			return renderView(view="home/index",module="filebrowser");
@@ -79,9 +79,9 @@ component output="false" hint="Main filebrowser module handler"{
 			event.setView(view="home/index",noLayout=event.isAjax());
 		}
 	}
-	
+
 	/**
-	* Creates folders asynchrounsly return json information: 
+	* Creates folders asynchrounsly return json information:
 	*/
 	function createfolder(event,rc,prc){
 		var data = {
@@ -91,7 +91,7 @@ component output="false" hint="Main filebrowser module handler"{
 		// param value
 		event.paramValue("path","");
 		event.paramValue("dName","");
-		
+
 		// Verify credentials else return invalid
 		if( !prc.settings.createFolders ){
 			data.errors = true;
@@ -99,7 +99,7 @@ component output="false" hint="Main filebrowser module handler"{
 			event.renderData(data=data,type="json");
 			return;
 		}
-		
+
 		// clean incoming path and names
 		rc.path = URLDecode( trim( antiSamy.clean( rc.path ) ) );
 		rc.dName = URLDecode( trim( antiSamy.clean( rc.dName ) ) );
@@ -109,7 +109,7 @@ component output="false" hint="Main filebrowser module handler"{
 			event.renderData(data=data,type="json");
 			return;
 		}
-		
+
 		// creation
 		try{
 			fileUtils.directoryCreate( rc.path & "/" & rc.dName );
@@ -124,9 +124,9 @@ component output="false" hint="Main filebrowser module handler"{
 		// render stuff out
 		event.renderData(data=data,type="json");
 	}
-	
+
 	/**
-	* Removes folders + files asynchrounsly return json information: 
+	* Removes folders + files asynchrounsly return json information:
 	*/
 	function remove(event,rc,prc){
 		var data = {
@@ -135,7 +135,7 @@ component output="false" hint="Main filebrowser module handler"{
 		};
 		// param value
 		event.paramValue("path","");
-		
+
 		// Verify credentials else return invalid
 		if( !prc.settings.deleteStuff ){
 			data.errors = true;
@@ -143,7 +143,7 @@ component output="false" hint="Main filebrowser module handler"{
 			event.renderData(data=data,type="json");
 			return;
 		}
-		
+
 		// clean incoming path and names
 		rc.path = URLDecode( trim( antiSamy.clean( rc.path ) ) );
 		if( !len(rc.path) ){
@@ -152,7 +152,7 @@ component output="false" hint="Main filebrowser module handler"{
 			event.renderData(data=data,type="json");
 			return;
 		}
-		
+
 		// removal
 		try{
 			if( fileExists( rc.path ) ){
@@ -172,7 +172,7 @@ component output="false" hint="Main filebrowser module handler"{
 		// render stuff out
 		event.renderData(data=data,type="json");
 	}
-	
+
 	/**
 	* download file
 	*/
@@ -183,7 +183,7 @@ component output="false" hint="Main filebrowser module handler"{
 		};
 		// param value
 		event.paramValue("path","");
-		
+
 		// Verify credentials else return invalid
 		if( !prc.settings.allowDownload ){
 			data.errors = true;
@@ -191,7 +191,7 @@ component output="false" hint="Main filebrowser module handler"{
 			event.renderData(data=data,type="json");
 			return;
 		}
-		
+
 		// clean incoming path and names
 		rc.path = URLDecode( trim( antiSamy.clean( rc.path ) ) );
 		if( !len(rc.path) ){
@@ -200,7 +200,7 @@ component output="false" hint="Main filebrowser module handler"{
 			event.renderData(data=data,type="json");
 			return;
 		}
-		
+
 		// download
 		try{
 			fileUtils.sendFile(file=rc.path);
@@ -215,7 +215,7 @@ component output="false" hint="Main filebrowser module handler"{
 		// render stuff out
 		event.renderData(data=data,type="json");
 	}
-	
+
 	/**
 	* rename
 	*/
@@ -227,7 +227,7 @@ component output="false" hint="Main filebrowser module handler"{
 		// param value
 		event.paramValue("path","");
 		event.paramValue("name","");
-		
+
 		// clean incoming path and names
 		rc.path = URLDecode( trim( antiSamy.clean( rc.path ) ) );
 		rc.name = URLDecode( trim( antiSamy.clean( rc.name ) ) );
@@ -237,7 +237,7 @@ component output="false" hint="Main filebrowser module handler"{
 			event.renderData(data=data,type="json");
 			return;
 		}
-		
+
 		// rename
 		try{
 			if( fileExists( rc.path ) ){
@@ -257,17 +257,17 @@ component output="false" hint="Main filebrowser module handler"{
 		// render stuff out
 		event.renderData(data=data,type="json");
 	}
-	
+
 	/**
 	* Upload File
 	*/
 	function upload(event,rc,prc){
 		// param values
 		event.paramValue("folder","");
-		
+
 		// clean incoming path
 		rc.folder = URLDecode( trim( antiSamy.clean( rc.folder ) ) );
-		
+
 		// traversal test
 		if( prc.settings.traversalSecurity AND NOT findNoCase(prc.settings.directoryRoot, rc.folder) ){
 			data.errors = true;
@@ -275,7 +275,7 @@ component output="false" hint="Main filebrowser module handler"{
 			event.renderData(data=data,type="json");
 			return;
 		}
-		
+
 		// Verify credentials else return invalid
 		if( !prc.settings.allowUploads ){
 			data.errors = false;
@@ -283,7 +283,7 @@ component output="false" hint="Main filebrowser module handler"{
 			event.renderData(data=data,type="json");
 			return;
 		}
-		
+
 		// download
 		try{
 			var results = fileUtils.uploadFile(fileField="FILEDATA",
@@ -302,11 +302,11 @@ component output="false" hint="Main filebrowser module handler"{
 			data.messages = "Error uploading file: #e.message# #e.detail#";
 			log.error(data.messages, e);
 		}
-		
+
 		// render stuff out
 		event.renderData(data=data,type="json");
 	}
-	
+
 	/**
 	* Inflate flash params if they exist into the appropriate function variables.
 	*/
@@ -323,9 +323,9 @@ component output="false" hint="Main filebrowser module handler"{
 		}
 		// clean callback
 		rc.cancelCallback = antiSamy.clean( rc.cancelCallback );
-		
+
 		// keep flash backs
 		flash.keep("filebrowser");
 	}
-	
+
 }
