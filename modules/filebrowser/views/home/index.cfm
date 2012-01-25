@@ -75,7 +75,7 @@
 			<cfloop query="prc.qListing">
 
 				<!--- Check Name Filter --->
-				<cfif NOT reFindNoCase(prc.settings.nameFilter, prc.qListing.name)> <cfcontinue> </cfif>
+				<cfif NOT reFindNoCase(prc.nameFilter, prc.qListing.name)> <cfcontinue> </cfif>
 
 				<!--- ID Name of the div --->
 				<cfset validIDName = $validIDName( prc.qListing.name ) >
@@ -131,14 +131,14 @@
 		<!--- The Bottom Bar --->
 		<div class="bottomBar">
 			#announceInterception("preBottomBar")#
-			
+
 			<!--- Loader Bar --->
 			<div id="loaderBar">
 				<img src="#prc.modRoot#/includes/images/ajax-loader.gif" />
 			</div>
-			
+
 			<!--- Status Text --->
-			<div id="statusText"></div> 
+			<div id="statusText"></div>
 
 			<!--- Download IFrame --->
 			<cfif prc.settings.allowDownload>
@@ -150,19 +150,19 @@
 			<input type="hidden" name="selectedItemURL" id="selectedItemURL" value="">
 			<input type="hidden" name="selectedItemID" id="selectedItemID" value="">
 			<input type="hidden" name="selectedItemType" id="selectedItemType" value="file">
-			
+
 			<div id="statusButtons">
 				<!--- Cancel Button --->
 				<cfif len(rc.cancelCallback)>
 					<input type="button" id="bt_cancel" value="Cancel" onClick="#rc.cancelCallback#()"> &nbsp;
 				</cfif>
-	
+
 				<!--- Select Item --->
 				<cfif len(rc.callback)>
 				<input type="button" id="bt_select"  value="Choose" onClick="fbChoose()" disabled="true" title="Choose selected file/directory">
 				</cfif>
 			</div>
-			
+
 			#announceInterception("postBottomBar")#
 		</div>
 
