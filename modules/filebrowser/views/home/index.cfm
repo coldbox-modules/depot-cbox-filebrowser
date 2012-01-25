@@ -47,7 +47,7 @@
 			<cfif prc.fbSettings.allowDownload>
 			<a href="javascript:fbDownload()" title="Download File"><img src="#prc.fbModRoot#/includes/images/download.png"  border="0"></a>&nbsp;
 			</cfif>
-			
+
 			<!--- Sorting --->
 			#html.label(field="fbSorting",content="Sort By: ")#
 			#html.select(name="fbSorting",options="Name,Size,LastModified",selectedValue=prc.fbPreferences.sorting)#
@@ -61,7 +61,7 @@
 			<input id="file_upload" name="file_upload" type="file" />
 			#announceInterception("postUploadBar")#
 		</div>
-		
+
 		<!--- QuickViewBar --->
 		<div id="quickViewBar">
 			<img id="fbCloseButton" src="#prc.fbModRoot#/includes/images/x.png" alt="close"/>
@@ -87,7 +87,7 @@
 			<cfloop query="prc.fbqListing">
 
 				<!--- Check Name Filter --->
-				<cfif NOT reFindNoCase(prc.fbSettings.nameFilter, prc.fbqListing.name)> <cfcontinue> </cfif>
+				<cfif NOT reFindNoCase(prc.nameFilter, prc.fbqListing.name)> <cfcontinue> </cfif>
 
 				<!--- ID Name of the div --->
 				<cfset validIDName = $validIDName( prc.fbqListing.name ) >
@@ -146,14 +146,14 @@
 		<!--- The Bottom Bar --->
 		<div class="bottomBar">
 			#announceInterception("preBottomBar")#
-			
+
 			<!--- Loader Bar --->
 			<div id="loaderBar">
 				<img src="#prc.fbModRoot#/includes/images/ajax-loader.gif" />
 			</div>
-			
+
 			<!--- Status Text --->
-			<div id="statusText"></div> 
+			<div id="statusText"></div>
 
 			<!--- Download IFrame --->
 			<cfif prc.fbSettings.allowDownload>
@@ -165,19 +165,19 @@
 			<input type="hidden" name="selectedItemURL" id="selectedItemURL" value="">
 			<input type="hidden" name="selectedItemID" id="selectedItemID" value="">
 			<input type="hidden" name="selectedItemType" id="selectedItemType" value="file">
-			
+
 			<div id="statusButtons">
 				<!--- Cancel Button --->
 				<cfif len(rc.cancelCallback)>
 					<input type="button" id="bt_cancel" value="Cancel" onClick="#rc.cancelCallback#()"> &nbsp;
 				</cfif>
-	
+
 				<!--- Select Item --->
 				<cfif len(rc.callback)>
 				<input type="button" id="bt_select"  value="Choose" onClick="fbChoose()" disabled="true" title="Choose selected file/directory">
 				</cfif>
 			</div>
-			
+
 			#announceInterception("postBottomBar")#
 		</div>
 

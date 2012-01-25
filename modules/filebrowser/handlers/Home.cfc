@@ -18,7 +18,8 @@ component output="false" hint="Main filebrowser module handler"{
 		event.paramValue("path","");
 		event.paramValue("callback","");
 		event.paramValue("cancelCallback","");
-		
+		event.paramValue("filterType","");
+
 		// Detect sorting changes
 		detectSorting(event,rc,prc);
 
@@ -35,7 +36,7 @@ component output="false" hint="Main filebrowser module handler"{
 			// Add Main Styles
 			addAsset("#prc.fbModRoot#/includes/css/style.css");
 			addAsset("#prc.fbModRoot#/includes/css/jquery.contextMenu.css");
-			
+
 			// load jquery if needed
 			if( prc.fbSettings.loadJquery ){
 				addAsset("#prc.fbModRoot#/includes/javascript/jquery-1.4.4.min.js");
@@ -43,7 +44,7 @@ component output="false" hint="Main filebrowser module handler"{
 			// Add additional JS
 			addAsset("#prc.fbModRoot#/includes/javascript/jquery.uidivfilter.js");
 			addAsset("#prc.fbModRoot#/includes/javascript/jquery.contextMenu.min.js");
-			
+
 			// uploadify if uploads enabled
 			if( prc.fbSettings.allowUploads ){
 				addAsset("#prc.fbModRoot#/includes/uploadify/uploadify.css");
@@ -88,6 +89,9 @@ component output="false" hint="Main filebrowser module handler"{
 
 		// Get storage preferences
 		prc.fbPreferences = getPreferences();
+		prc.nameFilter = prc.fbSettings.nameFilter;
+		if (rc.filterType == "Image") {prc.nameFilter = prc.fbSettings.imgNameFilter;}
+		if (rc.filterType == "Flash") {prc.nameFilter = prc.fbSettings.flashNameFilter;}
 
 		// get directory listing.
 		prc.fbqListing = directoryList( prc.fbCurrentRoot, false, "query", prc.fbSettings.extensionFilter, "#prc.fbPreferences.sorting#");
@@ -100,7 +104,7 @@ component output="false" hint="Main filebrowser module handler"{
 			event.setView(view="home/index",noLayout=event.isAjax());
 		}
 	}
-	
+
 	/**
 	* Get preferences
 	*/
@@ -117,10 +121,10 @@ component output="false" hint="Main filebrowser module handler"{
 		else{
 			prefs = deserializeJSON( prefs );
 		}
-		
+
 		return prefs;
 	}
-	
+
 	/**
 	* Detect Sorting
 	*/
@@ -377,9 +381,15 @@ component output="false" hint="Main filebrowser module handler"{
 		}
 		// clean callback
 		rc.cancelCallback = antiSamy.clean( rc.cancelCallback );
+		// filterType
+		if( structKeyExists( flash.get( "fileBrowser", {} ), "filterType") ){
+			rc.filterType = flash.get("fileBrowser").filterType;
+		}
+		// clean callback
+		rc.filterType = antiSamy.clean( rc.filterType );
 
 		if(!flash.exists("filebrowser")){
-			var filebrowser = {callback=rc.callback,cancelCallback=rc.cancelCallback};
+			var filebrowser = {callback=rc.callback,cancelCallback=rc.cancelCallback,filterType=rc.filterType};
 			flash.put("filebrowser",filebrowser);
 		}
 
