@@ -57,6 +57,8 @@ The arguments you can use are:
 			loadJQuery = true,
 			// Load ckEditorHook
 			loadSelectCallbacks = true,
+			// Quick View image width in pixels
+			quickViewWidth = 400,
 			// Uploadify Settings
 			uploadify = {
 				fileDesc = "All Files",
