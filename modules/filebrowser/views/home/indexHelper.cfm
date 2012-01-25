@@ -66,6 +66,7 @@ $(document).ready(function() {
 	$fileBrowser.find("##fbQuickFilter").keyup(function(){
 		$.uiDivFilter( $(".filterDiv"), this.value);
 	})
+	
 });
 function fbCloseQuickView(){
 	$quickView.slideUp();
@@ -82,6 +83,9 @@ function fbContextActions(action,el,pos){
 		</cfif>
 		<cfif prc.fbSettings.allowDownload>
 		case "download"  : fbDownload(); break;
+		</cfif>
+		<cfif len(rc.callback)>
+		case "select" 	 : fbSelect(); break;
 		</cfif>
 	}
 }
@@ -130,13 +134,12 @@ function fbQuickView(){
 	// show it
 	var imgURL = "#event.buildLink(prc.xehFBDownload)#?path="+ escape( target.attr("data-fullURL") );
 	$quickView.slideDown();
-	$quickViewContents.html('<img src="'+imgURL+'" width="#prc.fbSettings.quickViewWidth#"/>');
+	$quickViewContents.html('<img src="'+imgURL+'" style="max-width:#prc.fbSettings.quickViewWidth#px"/>');
 }
 function fbRename(){
 	// check selection
 	var sPath = $selectedItem.val();
 	if( !sPath.length ){ alert("Please select a file-folder first."); return; }
-
 	// get ID
 	var thisID 		= $selectedItemID.val();
 	var target 		= $("##"+thisID);
@@ -191,7 +194,7 @@ function fbDownload(){
 <!--- CallBack --->
 <cfif len(rc.callback)>
 function fbChoose(){
-	var sPath = $selectedItemURL.val();
+	var sPath = $selectedItem.val();
 	var sURL = $selectedItemURL.val();
 	var sType = $selectedItemType.val();
 	#rc.callback#( sPath,sURL,sType );

@@ -192,7 +192,12 @@
 		<li class="quickview">
 	        <a href="##quickview">Quick View</a>
 	    </li>
-		<li class="rename separator">
+		<cfif len(rc.callback)>
+		<li class="select">
+	        <a href="##select">Select</a>
+	    </li>
+		</cfif>
+		<li class="rename">
 	        <a href="##rename">Rename</a>
 	    </li>
 		<cfif prc.fbSettings.deleteStuff>
@@ -207,6 +212,11 @@
 		</cfif>
 	</ul>
 	<ul id="fbContextMenuDirectories" class="contextMenu">
+		<cfif len(rc.callback)>
+		<li class="select">
+	        <a href="##select">Select</a>
+	    </li>
+		</cfif>
 	    <li class="rename">
 	        <a href="##rename">Rename</a>
 	    </li>
