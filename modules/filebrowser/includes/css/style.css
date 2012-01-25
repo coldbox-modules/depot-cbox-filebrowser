@@ -14,8 +14,6 @@
     border-bottom:1px solid #ddd; 
     background-color: #f5f5f5;
     padding: 10px;
-    font-size: 14px;
-    font-weight:bold;
 }
 #FileBrowser #titleBar label{
     font-size: 10px;
@@ -23,6 +21,10 @@
 }
 #FileBrowser #titleBar #title{
     float: right;
+    background: url(../images/coldbox_icon.png) no-repeat left center; 
+    font-size: 14px;
+    font-weight:bold;
+    padding-left: 25px;
 }
 #FileBrowser #quickViewBar{
 	 display:none; text-align:center; background-color:#ccc; padding:8px; position: absolute; left:25%;
