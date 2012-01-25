@@ -1,4 +1,4 @@
-<!--- 
+<!---
 File Browser can be used by either navigating to it or rendering it out as a widget:
 
 #runEvent(event="filebrowser:home",eventArguments={widget=true})#
@@ -11,7 +11,7 @@ The arguments you can use are:
 
  --->
 <cfcomponent output="false" hint="My Module Configuration">
-<cfscript>	
+<cfscript>
 	// Module Properties
 	this.title 				= "File Browser";
 	this.author 			= "Ortus Solutions";
@@ -24,9 +24,9 @@ The arguments you can use are:
 	this.layoutParentLookup = true;
 	// Module Entry Point
 	this.entryPoint			= "filebrowser";
-	
+
 	function configure(){
-		
+
 		// module settings - stored in modules.name.settings
 		settings = {
 			// The title name for usage inline and the layout
@@ -55,6 +55,8 @@ The arguments you can use are:
 			volumeChooser = true,
 			// Load jQuery
 			loadJQuery = true,
+			// Load ckEditorHook
+			loadSelectCallbacks = true,
 			// Uploadify Settings
 			uploadify = {
 				fileDesc = "All Files",
@@ -64,15 +66,18 @@ The arguments you can use are:
 				customJSONOptions = ""
 			}
 		};
-		
+
 		// clean directory root
 		settings.directoryRoot = REReplace(settings.directoryRoot,"\\","/","all");
-		
+		if (right(settings.directoryRoot,1) EQ "/") {
+			settings.directoryRoot = left(settings.directoryRoot,len(settings.directoryRoot)-1);
+		}
+
 		// Layout Settings
 		layoutSettings = {
 			defaultLayout = "filebrowser.cfm"
 		};
-		
+
 		// SES Routes
 		routes = [
 			// create folder
@@ -90,36 +95,36 @@ The arguments you can use are:
 			// Module Entry Point
 			{pattern="/", handler="home",action="index"},
 			// Convention Route
-			{pattern="/:handler/:action?"}		
-		];		
-		
+			{pattern="/:handler/:action?"}
+		];
+
 		// Custom Declared Points
 		interceptorSettings = {
 			customInterceptionPoints = "preTitleBar,postTitleBar,preLocationBar,postLocationBar,preBottomBar,postBottomBar,preFileListing,postFileListing"
 		};
-		
+
 		// Custom Declared Interceptors
 		interceptors = [
 		];
-		
+
 		// Binder Mappings
 		// binder.map("Alias").to("#moduleMapping#.model.MyService");
-		
+
 	}
-	
+
 	/**
 	* Fired when the module is registered and activated.
 	*/
 	function onLoad(){
-		
+
 	}
-	
+
 	/**
 	* Fired when the module is unregistered and unloaded
 	*/
 	function onUnload(){
-		
+
 	}
-	
+
 </cfscript>
 </cfcomponent>
