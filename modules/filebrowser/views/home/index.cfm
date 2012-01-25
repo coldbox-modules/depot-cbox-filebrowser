@@ -87,7 +87,7 @@
 			<cfloop query="prc.fbqListing">
 
 				<!--- Check Name Filter --->
-				<cfif NOT reFindNoCase(prc.nameFilter, prc.fbqListing.name)> <cfcontinue> </cfif>
+				<cfif NOT reFindNoCase(prc.fbNameFilter, prc.fbqListing.name)> <cfcontinue> </cfif>
 
 				<!--- ID Name of the div --->
 				<cfset validIDName = $validIDName( prc.fbqListing.name ) >

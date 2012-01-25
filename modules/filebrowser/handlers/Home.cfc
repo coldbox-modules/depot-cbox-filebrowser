@@ -89,9 +89,9 @@ component output="false" hint="Main filebrowser module handler"{
 
 		// Get storage preferences
 		prc.fbPreferences = getPreferences();
-		prc.nameFilter = prc.fbSettings.nameFilter;
-		if (rc.filterType == "Image") {prc.nameFilter = prc.fbSettings.imgNameFilter;}
-		if (rc.filterType == "Flash") {prc.nameFilter = prc.fbSettings.flashNameFilter;}
+		prc.fbNameFilter = prc.fbSettings.nameFilter;
+		if (rc.filterType == "Image") {prc.fbNameFilter = prc.fbSettings.imgNameFilter;}
+		if (rc.filterType == "Flash") {prc.fbNameFilter = prc.fbSettings.flashNameFilter;}
 
 		// get directory listing.
 		prc.fbqListing = directoryList( prc.fbCurrentRoot, false, "query", prc.fbSettings.extensionFilter, "#prc.fbPreferences.sorting#");
