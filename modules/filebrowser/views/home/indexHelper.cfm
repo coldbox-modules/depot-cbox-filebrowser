@@ -62,6 +62,10 @@ $(document).ready(function() {
 	// Sorting
 	$sorting.change(function(){ fbRefresh(); });
 	$quickViewCloseBtn.click(function(){ fbCloseQuickView(); });
+	// Quick div filter
+	$fileBrowser.find("##fbQuickFilter").keyup(function(){
+		$.uiDivFilter( $(".filterDiv"), this.value, divIsHidden )
+	})
 });
 function fbCloseQuickView(){
 	$quickView.slideUp();

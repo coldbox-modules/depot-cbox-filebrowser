@@ -51,7 +51,11 @@
 			<!--- Sorting --->
 			#html.label(field="fbSorting",content="Sort By: ")#
 			#html.select(name="fbSorting",options="Name,Size,LastModified",selectedValue=prc.fbPreferences.sorting)#
-
+			
+			<!--- Quick Filter --->
+			#html.label(field="fbQuickFilter",content="Quick Filter: ")#
+			#html.textField(name="fbQuickFilter",size="20")#
+			
 			#announceInterception("postTitleBar")#
 		</div>
 
@@ -100,7 +104,7 @@
 					<!--- Folder --->
 					<div id="#validIDName#"
 						 onClick="fbSelect('#validIDName#','#JSStringFormat(plainURL)#')"
-						 class="folders"
+						 class="folders filterDiv"
 						 data-type="dir"
 						 data-name="#prc.fbqListing.Name#"
 						 data-fullURL="#plainURL#"
@@ -115,7 +119,7 @@
 				<cfelseif prc.fbSettings.showFiles>
 					<!--- Display the DiV --->
 					<div id="#validIDName#"
-						 class="files"
+						 class="files filterDiv"
 						 data-type="file"
 						 data-name="#prc.fbqListing.Name#"
 						 data-fullURL="#plainURL#"

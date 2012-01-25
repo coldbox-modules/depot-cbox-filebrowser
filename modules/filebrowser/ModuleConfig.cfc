@@ -52,7 +52,7 @@ The arguments you can use are:
 			// Extension filtering that applies to file extensions to display, matches the filter argument to directoryList()
 			extensionFilter = "",
 			// Image Name filtering applies to both files and directories. This is also a regex.  Where the filterType=image.
-			imgNameFilter = "$.jpg|$.gif|$.png|^((?!\.).)*$",
+			imgNameFilter = "$.jpg|$.jpeg|$.bmp|$.gif|$.png|^((?!\.).)*$",
 			// Flash Name filtering applies to both files and directories. This is also a regex.  Where the filterType=flash.
 			flashNameFilter = "$.swf|^((?!\.).)*$",
 			// Volume Chooser, display the volume navigator
