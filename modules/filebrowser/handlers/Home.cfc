@@ -3,13 +3,14 @@ component output="false" hint="Main filebrowser module handler"{
 	// DI
 	property name="antiSamy"		inject="coldbox:plugin:AntiSamy";
 	property name="fileUtils"		inject="coldbox:plugin:FileUtils";
+	property name="cookieStorage"	inject="coldbox:plugin:CookieStorage";
 
 	function preHandler(event,currentAction){
 		var prc = event.getCollection(private=true);
 		// place root in prc and also module settings
-		prc.modRoot	 = event.getModuleRoot();
+		prc.fbModRoot	 = event.getModuleRoot();
 		// we duplicate the settings so we can do overrides a-la-carte
-		prc.settings = duplicate( getModuleSettings("filebrowser").settings );
+		prc.fbSettings = duplicate( getModuleSettings("filebrowser").settings );
 	}
 
 	function index(event,rc,prc,boolean widget=false){
@@ -18,30 +19,40 @@ component output="false" hint="Main filebrowser module handler"{
 		event.paramValue("callback","");
 		event.paramValue("cancelCallback","");
 		event.paramValue("filterType","");
+
+		// Detect sorting changes
+		detectSorting(event,rc,prc);
+
 		// exit handlers
-		prc.xehBrowser 		= "filebrowser/";
-		prc.xehNewFolder 	= "filebrowser/createfolder";
-		prc.xehRemove 		= "filebrowser/remove";
-		prc.xehDownload		= "filebrowser/download";
-		prc.xehUpload		= "filebrowser/upload";
-		prc.xehRename		= "filebrowser/rename";
+		prc.xehFBBrowser 		= "filebrowser/";
+		prc.xehFBNewFolder 	= "filebrowser/createfolder";
+		prc.xehFBRemove 		= "filebrowser/remove";
+		prc.xehFBDownload		= "filebrowser/download";
+		prc.xehFBUpload		= "filebrowser/upload";
+		prc.xehFBRename		= "filebrowser/rename";
 
 		// Load CSS and JS only if not in Ajax Mode
 		if( NOT event.isAjax() ){
-			addAsset("#prc.modRoot#/includes/css/style.css");
+			// Add Main Styles
+			addAsset("#prc.fbModRoot#/includes/css/style.css");
+			addAsset("#prc.fbModRoot#/includes/css/jquery.contextMenu.css");
+
 			// load jquery if needed
-			if( prc.settings.loadJquery ){
-				addAsset("#prc.modRoot#/includes/javascript/jquery-1.4.4.min.js");
+			if( prc.fbSettings.loadJquery ){
+				addAsset("#prc.fbModRoot#/includes/javascript/jquery-1.4.4.min.js");
 			}
-			addAsset("#prc.modRoot#/includes/javascript/jquery.uidivfilter.js");
+			// Add additional JS
+			addAsset("#prc.fbModRoot#/includes/javascript/jquery.uidivfilter.js");
+			addAsset("#prc.fbModRoot#/includes/javascript/jquery.contextMenu.min.js");
+
 			// uploadify if uploads enabled
-			if( prc.settings.allowUploads ){
-				addAsset("#prc.modRoot#/includes/uploadify/uploadify.css");
-				addAsset("#prc.modRoot#/includes/uploadify/swfobject.js");
-				addAsset("#prc.modRoot#/includes/uploadify/jquery.uploadify.v2.1.4.min.js");
+			if( prc.fbSettings.allowUploads ){
+				addAsset("#prc.fbModRoot#/includes/uploadify/uploadify.css");
+				addAsset("#prc.fbModRoot#/includes/uploadify/swfobject.js");
+				addAsset("#prc.fbModRoot#/includes/uploadify/jquery.uploadify.v2.1.4.min.js");
 			}
-			if( prc.settings.loadSelectCallbacks ){
-				addAsset("#prc.modRoot#/includes/javascript/selectCallbacks.js");
+			if( prc.fbSettings.loadSelectCallbacks ){
+				addAsset("#prc.fbModRoot#/includes/javascript/selectCallbacks.js");
 			}
 		}
 
@@ -51,43 +62,79 @@ component output="false" hint="Main filebrowser module handler"{
 		// clean incoming path
 		rc.path = URLDecode( trim( antiSamy.clean( rc.path ) ) );
 		// Store directory root
-		prc.dirRoot 	= prc.settings.directoryRoot;
-		prc.webRootPath = getSetting("applicationpath");
+		prc.fbDirRoot 	= prc.fbSettings.directoryRoot;
+		prc.fbwebRootPath = getSetting("applicationpath");
 
 		// Get the current Root
 		if( !len(rc.path) ){
-			prc.currentRoot = prc.settings.directoryRoot;
+			prc.fbCurrentRoot = prc.fbSettings.directoryRoot;
 		}
 		else{
-			prc.currentRoot = rc.path;
+			prc.fbCurrentRoot = rc.path;
 		}
-		prc.currentRoot = REReplace(prc.currentRoot,"(/|\\){1,}$","","all");
-		prc.currentRoot = REReplace(prc.currentRoot,"\\","/","all");
+		prc.fbCurrentRoot = REReplace(prc.fbCurrentRoot,"(/|\\){1,}$","","all");
+		prc.fbCurrentRoot = REReplace(prc.fbCurrentRoot,"\\","/","all");
 
-		prc.webRootPath = REReplace(prc.webRootPath,"(/|\\){1,}$","","all");
-		prc.webRootPath = REReplace(prc.webRootPath,"\\","/","all");
+		prc.fbwebRootPath = REReplace(prc.fbwebRootPath,"(/|\\){1,}$","","all");
+		prc.fbwebRootPath = REReplace(prc.fbwebRootPath,"\\","/","all");
 
 		// Do a safe current root
-		prc.safeCurrentRoot = URLEncodedFormat( prc.currentRoot );
+		prc.fbSafeCurrentRoot = URLEncodedFormat( prc.fbCurrentRoot );
 
 		// traversal test
-		if( prc.settings.traversalSecurity AND NOT findNoCase(prc.settings.directoryRoot, prc.currentRoot) ){
+		if( prc.fbSettings.traversalSecurity AND NOT findNoCase(prc.fbSettings.directoryRoot, prc.fbCurrentRoot) ){
 			getPlugin("MessageBox").warn("Traversal security exception");
-			setNextEvent(prc.xehBrowser);
+			setNextEvent(prc.xehFBBrowser);
 		}
 
-		// get directory listing.
-		prc.nameFilter = prc.settings.nameFilter;
-		if (rc.filterType == "Image") {prc.nameFilter = prc.settings.imgNameFilter;}
-		if (rc.filterType == "Flash") {prc.nameFilter = prc.settings.flashNameFilter;}
+		// Get storage preferences
+		prc.fbPreferences = getPreferences();
+		prc.nameFilter = prc.fbSettings.nameFilter;
+		if (rc.filterType == "Image") {prc.nameFilter = prc.fbSettings.imgNameFilter;}
+		if (rc.filterType == "Flash") {prc.nameFilter = prc.fbSettings.flashNameFilter;}
 
-		prc.qListing = directoryList( prc.currentRoot, false, "query", prc.settings.extensionFilter, "asc");
+		// get directory listing.
+		prc.fbqListing = directoryList( prc.fbCurrentRoot, false, "query", prc.fbSettings.extensionFilter, "#prc.fbPreferences.sorting#");
+
 		// set view or widget?
 		if( arguments.widget ){
 			return renderView(view="home/index",module="filebrowser");
 		}
 		else{
 			event.setView(view="home/index",noLayout=event.isAjax());
+		}
+	}
+
+	/**
+	* Get preferences
+	*/
+	private function getPreferences(){
+		// Get preferences
+		var prefs = cookieStorage.getVar("fileBrowserPrefs","");
+		// not found or not JSON setup defaults
+		if( !len(prefs) OR NOT isJSON(prefs) ){
+			prefs = {
+				sorting = "name"
+			};
+			cookieStorage.setVar("fileBrowserPrefs",serializeJSON(prefs));
+		}
+		else{
+			prefs = deserializeJSON( prefs );
+		}
+
+		return prefs;
+	}
+
+	/**
+	* Detect Sorting
+	*/
+	private function detectSorting(event,rc,prc){
+		if( structKeyExists(rc,"sorting") AND reFindNoCase("^(name|size|lastModified)$",rc.sorting) ){
+			var prefs = getPreferences();
+			if( prefs.sorting NEQ rc.sorting ){
+				prefs.sorting = rc.sorting;
+				cookieStorage.setVar("fileBrowserPrefs",serializeJSON(prefs));
+			}
 		}
 	}
 
@@ -104,7 +151,7 @@ component output="false" hint="Main filebrowser module handler"{
 		event.paramValue("dName","");
 
 		// Verify credentials else return invalid
-		if( !prc.settings.createFolders ){
+		if( !prc.fbSettings.createFolders ){
 			data.errors = true;
 			data.messages = "CreateFolders permission is disabled.";
 			event.renderData(data=data,type="json");
@@ -148,7 +195,7 @@ component output="false" hint="Main filebrowser module handler"{
 		event.paramValue("path","");
 
 		// Verify credentials else return invalid
-		if( !prc.settings.deleteStuff ){
+		if( !prc.fbSettings.deleteStuff ){
 			data.errors = true;
 			data.messages = "Delete Stuff permission is disabled.";
 			event.renderData(data=data,type="json");
@@ -196,7 +243,7 @@ component output="false" hint="Main filebrowser module handler"{
 		event.paramValue("path","");
 
 		// Verify credentials else return invalid
-		if( !prc.settings.allowDownload ){
+		if( !prc.fbSettings.allowDownload ){
 			data.errors = true;
 			data.messages = "Download permission is disabled.";
 			event.renderData(data=data,type="json");
@@ -280,7 +327,7 @@ component output="false" hint="Main filebrowser module handler"{
 		rc.folder = URLDecode( trim( antiSamy.clean( rc.folder ) ) );
 
 		// traversal test
-		if( prc.settings.traversalSecurity AND NOT findNoCase(prc.settings.directoryRoot, rc.folder) ){
+		if( prc.fbSettings.traversalSecurity AND NOT findNoCase(prc.fbSettings.directoryRoot, rc.folder) ){
 			data.errors = true;
 			data.messages = "Traversal security activated, path not allowed!";
 			event.renderData(data=data,type="json");
@@ -288,7 +335,7 @@ component output="false" hint="Main filebrowser module handler"{
 		}
 
 		// Verify credentials else return invalid
-		if( !prc.settings.allowUploads ){
+		if( !prc.fbSettings.allowUploads ){
 			data.errors = false;
 			data.messages = "Uploads not allowed!";
 			event.renderData(data=data,type="json");
@@ -300,7 +347,7 @@ component output="false" hint="Main filebrowser module handler"{
 			var results = fileUtils.uploadFile(fileField="FILEDATA",
 											   destination=rc.folder,
 											   nameConflict="Overwrite",
-											   accept=prc.settings.acceptMimeTypes);
+											   accept=prc.fbSettings.acceptMimeTypes);
 			// debug log file
 			if( log.canDebug() ){
 				log.debug("File Uploaded!", results);

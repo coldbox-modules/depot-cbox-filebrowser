@@ -1,4 +1,6 @@
 #FileBrowser #container{
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+   	font-size: 11px;
     width: 98%;
     margin: 10px auto 10px auto; 
     border: 2px solid #ddd;
@@ -15,9 +17,19 @@
     font-size: 14px;
     font-weight:bold;
 }
+#FileBrowser #titleBar label{
+    font-size: 10px;
+    font-weight:bold;
+}
 #FileBrowser #titleBar #title{
     float: right;
 }
+#FileBrowser #quickViewBar{
+	 display:none; text-align:center; background-color:#ccc; padding:8px; position: absolute; left:25%;
+	 background-color: #555;-moz-box-shadow:0 0 5px #ccc; -webkit-box-shadow:0 0 5px #ccc; -moz-border-radius:6px; -webkit-border-radius:6px;
+}
+#FileBrowser #quickViewBar #fbCloseButton{ float:right; margin: -5px 0px 0px 5px; cursor:pointer;}
+#FileBrowser #quickViewBar #quickViewBarContents{float:left;}
 #FileBrowser #uploadBar{
 	display:none; text-align:center; background-color:#ccc; padding:5px
 }
@@ -28,7 +40,6 @@
 }
 #FileBrowser #fileListing{
     line-height:15px;
-    font-weight:bold;
     min-height: 200px;
 	padding: 5px;
     overflow: auto;
@@ -53,8 +64,7 @@
 }
 
 #FileBrowser #locationBar{
-    font-size:12px;
-    font-weight: bold;
+    font-size:10px;
     background-color: #C4C0C0;
     padding:5px;
     border-top:1px solid #ddd;
@@ -66,7 +76,7 @@
     font-weight:bold; 
     min-height: 20px;
 }
-#FileBrowser #statusText{float: left; margin:5px;font-size:12px;}
+#FileBrowser #statusText{float: left; margin:5px;font-size:10px;}
 #FileBrowser #statusButtons{text-align:right}
 #FileBrowser .folders, #FileBrowser .files{ cursor:pointer;margin: 0px;padding:2px; }
 #FileBrowser .folders.selected, #FileBrowser .files.selected{ background-color: #B3C6F9}
