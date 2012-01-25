@@ -113,9 +113,6 @@ The arguments you can use are:
 		interceptors = [
 		];
 
-		// Binder Mappings
-		// binder.map("Alias").to("#moduleMapping#.model.MyService");
-
 	}
 
 	/**

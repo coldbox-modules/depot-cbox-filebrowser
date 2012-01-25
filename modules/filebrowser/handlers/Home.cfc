@@ -24,10 +24,10 @@ component output="false" hint="Main filebrowser module handler"{
 		detectSorting(event,rc,prc);
 
 		// exit handlers
-		prc.xehFBBrowser 		= "filebrowser/";
+		prc.xehFBBrowser 	= "filebrowser/";
 		prc.xehFBNewFolder 	= "filebrowser/createfolder";
-		prc.xehFBRemove 		= "filebrowser/remove";
-		prc.xehFBDownload		= "filebrowser/download";
+		prc.xehFBRemove 	= "filebrowser/remove";
+		prc.xehFBDownload	= "filebrowser/download";
 		prc.xehFBUpload		= "filebrowser/upload";
 		prc.xehFBRename		= "filebrowser/rename";
 

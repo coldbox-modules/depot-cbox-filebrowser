@@ -64,7 +64,7 @@ $(document).ready(function() {
 	$quickViewCloseBtn.click(function(){ fbCloseQuickView(); });
 	// Quick div filter
 	$fileBrowser.find("##fbQuickFilter").keyup(function(){
-		$.uiDivFilter( $(".filterDiv"), this.value, divIsHidden )
+		$.uiDivFilter( $(".filterDiv"), this.value);
 	})
 });
 function fbCloseQuickView(){
