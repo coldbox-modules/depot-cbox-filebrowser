@@ -55,6 +55,8 @@ The arguments you can use are:
 			volumeChooser = true,
 			// Load jQuery
 			loadJQuery = true,
+			// Load ckEditorHook
+			loadSelectCallbacks = true,
 			// Uploadify Settings
 			uploadify = {
 				fileDesc = "All Files",

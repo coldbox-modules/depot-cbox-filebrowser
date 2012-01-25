@@ -40,6 +40,9 @@ component output="false" hint="Main filebrowser module handler"{
 				addAsset("#prc.modRoot#/includes/uploadify/swfobject.js");
 				addAsset("#prc.modRoot#/includes/uploadify/jquery.uploadify.v2.1.4.min.js");
 			}
+			if( prc.settings.loadSelectCallbacks ){
+				addAsset("#prc.modRoot#/includes/javascript/selectCallbacks.js");
+			}
 		}
 
 		// Inflate flash params
@@ -324,6 +327,11 @@ component output="false" hint="Main filebrowser module handler"{
 		}
 		// clean callback
 		rc.cancelCallback = antiSamy.clean( rc.cancelCallback );
+
+		if(!flash.exists("filebrowser")){
+			var filebrowser = {callback=rc.callback,cancelCallback=rc.cancelCallback};
+			flash.put("filebrowser",filebrowser);
+		}
 
 		// keep flash backs
 		flash.keep("filebrowser");
