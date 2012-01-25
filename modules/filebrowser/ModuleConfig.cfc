@@ -52,7 +52,7 @@ The arguments you can use are:
 			// Extension filtering that applies to file extensions to display, matches the filter argument to directoryList()
 			extensionFilter = "",
 			// Volume Chooser, display the volume navigator
-			volumeChooser = true,
+			volumeChooser = false,
 			// Load jQuery
 			loadJQuery = true,
 			// Load ckEditorHook

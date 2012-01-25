@@ -46,7 +46,7 @@ component output="false" hint="Main filebrowser module handler"{
 		}
 
 		// Inflate flash params
-		inflateFlashParams(event,rc,prc);
+		//inflateFlashParams(event,rc,prc);
 
 		// clean incoming path
 		rc.path = URLDecode( trim( antiSamy.clean( rc.path ) ) );
@@ -75,7 +75,6 @@ component output="false" hint="Main filebrowser module handler"{
 			getPlugin("MessageBox").warn("Traversal security exception");
 			setNextEvent(prc.xehBrowser);
 		}
-
 
 		// get directory listing.
 		prc.qListing = directoryList( prc.currentRoot, false, "query", prc.settings.extensionFilter, "asc");
