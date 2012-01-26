@@ -92,9 +92,6 @@ component output="false" hint="Main filebrowser module handler"{
 		prc.fbNameFilter = prc.fbSettings.nameFilter;
 		if (rc.filterType == "Image") {prc.fbNameFilter = prc.fbSettings.imgNameFilter;}
 		if (rc.filterType == "Flash") {prc.fbNameFilter = prc.fbSettings.flashNameFilter;}
-		prc.fbNameFilter = "^((?!\.).)*$|(?:\.(?:jpg|jpeg|bmp|gif|png))?$";
-		prc.fbNameFilter = "^((?!\.).)*$|.+\.(jpg|jpeg|bmp|gif|png)/? *";
-		//writeDump(prc.fbNameFilter);abort;
 		// get directory listing.
 		prc.fbqListing = directoryList( prc.fbCurrentRoot, false, "query", prc.fbSettings.extensionFilter, "#prc.fbPreferences.sorting#");
 
