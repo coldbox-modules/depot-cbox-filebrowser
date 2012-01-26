@@ -51,11 +51,11 @@
 			<!--- Sorting --->
 			#html.label(field="fbSorting",content="Sort By: ")#
 			#html.select(name="fbSorting",options="Name,Size,LastModified",selectedValue=prc.fbPreferences.sorting)#
-			
+
 			<!--- Quick Filter --->
 			#html.label(field="fbQuickFilter",content="Quick Filter: ")#
 			#html.textField(name="fbQuickFilter",size="20")#
-			
+
 			#announceInterception("postTitleBar")#
 		</div>
 
@@ -77,10 +77,10 @@
 		<!--- Show the File Listing --->
 		<div id="fileListing">
 			#announceInterception("preFileListing")#
-		    <!--- Messagebox --->
-		    #getPlugin("MessageBox").renderit()#
+			<!--- Messagebox --->
+			#getPlugin("MessageBox").renderit()#
 
-		    <!--- Display back links --->
+			<!--- Display back links --->
 			<cfif prc.fbCurrentRoot NEQ prc.fbDirRoot>
 				<a href="javascript:fbDrilldown('#$getBackPath(prc.fbCurrentRoot)#')" title="Go Back"><img src="#prc.fbModRoot#/includes/images/folder.png" border="0"  alt="Folder"></a>
 				<a href="javascript:fbDrilldown('#$getBackPath(prc.fbCurrentRoot)#')" title="Go Back">..</a><br>
@@ -190,40 +190,40 @@
 	<!--- ContextMenus --->
 	<ul id="fbContextMenu" class="contextMenu">
 		<li class="quickview">
-	        <a href="##quickview">Quick View</a>
-	    </li>
+			<a href="##quickview">Quick View</a>
+		</li>
 		<cfif len(rc.callback)>
 		<li class="select">
-	        <a href="##select">Select</a>
-	    </li>
+			<a href="##select">Select</a>
+		</li>
 		</cfif>
 		<li class="rename">
-	        <a href="##rename">Rename</a>
-	    </li>
+			<a href="##rename">Rename</a>
+		</li>
 		<cfif prc.fbSettings.deleteStuff>
-	    <li class="delete">
-	        <a href="##delete">Delete</a>
-	    </li>
+		<li class="delete">
+			<a href="##delete">Delete</a>
+		</li>
 		</cfif>
 		<cfif prc.fbSettings.allowDownload>
-	    <li class="download">
-	        <a href="##download">Download</a>
-	    </li>
+		<li class="download">
+			<a href="##download">Download</a>
+		</li>
 		</cfif>
 	</ul>
 	<ul id="fbContextMenuDirectories" class="contextMenu">
 		<cfif len(rc.callback)>
 		<li class="select">
-	        <a href="##select">Select</a>
-	    </li>
+			<a href="##select">Select</a>
+		</li>
 		</cfif>
-	    <li class="rename">
-	        <a href="##rename">Rename</a>
-	    </li>
+		<li class="rename">
+			<a href="##rename">Rename</a>
+		</li>
 		<cfif prc.fbSettings.deleteStuff>
-	    <li class="delete">
-	        <a href="##delete">Delete</a>
-	    </li>
+		<li class="delete">
+			<a href="##delete">Delete</a>
+		</li>
 		</cfif>
 	</ul>
 </div>

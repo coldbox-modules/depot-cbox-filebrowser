@@ -9,16 +9,28 @@ component output="false" hint="Main filebrowser module handler"{
 		var prc = event.getCollection(private=true);
 		// place root in prc and also module settings
 		prc.fbModRoot	 = event.getModuleRoot();
-		// we duplicate the settings so we can do overrides a-la-carte
-		prc.fbSettings = duplicate( getModuleSettings("filebrowser").settings );
+		// if the settings exist in flash, use those
+		if( structKeyExists( flash.get( "fileBrowser", {} ), "settings") ){
+			prc.fbsettings = flash.get("fileBrowser").settings;
+		} else {
+			// otherwise we duplicate the settings so we can do overrides a-la-carte
+			prc.fbSettings = duplicate( getModuleSettings("filebrowser").settings );
+		}
 	}
 
-	function index(event,rc,prc,boolean widget=false){
+	function index(event,rc,prc,boolean widget=false,struct settings={}){
 		// params
 		event.paramValue("path","");
 		event.paramValue("callback","");
 		event.paramValue("cancelCallback","");
 		event.paramValue("filterType","");
+
+		if(arguments.widget) {
+			//merge the settings structs
+			mergeSetting(event,rc,prc,settings);
+			//clean out the stored settings for this version
+			flash.remove("filebrowser");
+		}
 
 		// Detect sorting changes
 		detectSorting(event,rc,prc);
@@ -57,7 +69,7 @@ component output="false" hint="Main filebrowser module handler"{
 		}
 
 		// Inflate flash params
-		//inflateFlashParams(event,rc,prc);
+		inflateFlashParams(event,rc,prc);
 
 		// clean incoming path
 		rc.path = URLDecode( trim( antiSamy.clean( rc.path ) ) );
@@ -92,7 +104,6 @@ component output="false" hint="Main filebrowser module handler"{
 		prc.fbNameFilter = prc.fbSettings.nameFilter;
 		if (rc.filterType == "Image") {prc.fbNameFilter = prc.fbSettings.imgNameFilter;}
 		if (rc.filterType == "Flash") {prc.fbNameFilter = prc.fbSettings.flashNameFilter;}
-
 		// get directory listing.
 		prc.fbqListing = directoryList( prc.fbCurrentRoot, false, "query", prc.fbSettings.extensionFilter, "#prc.fbPreferences.sorting#");
 
@@ -136,6 +147,23 @@ component output="false" hint="Main filebrowser module handler"{
 				cookieStorage.setVar("fileBrowserPrefs",serializeJSON(prefs));
 			}
 		}
+	}
+
+	/**
+	* Merge module settings and arguments settings
+	*/
+	private function mergeSetting(event,rc,prc,struct settings={}){
+		var appliedSetting = {};
+		structAppend(appliedSetting, prc.fbSettings, true);
+		structAppend(appliedSetting, arguments.settings, true);
+		// clean directory root
+		if(structKeyExists(arguments.settings,"directoryRoot")) {
+			appliedSetting.directoryRoot = REReplace(appliedSetting.directoryRoot,"\\","/","all");
+			if (right(appliedSetting.directoryRoot,1) EQ "/") {
+				appliedSetting.directoryRoot = left(appliedSetting.directoryRoot,len(appliedSetting.directoryRoot)-1);
+			}
+		}
+		prc.fbSettings = appliedSetting;
 	}
 
 	/**
@@ -385,16 +413,19 @@ component output="false" hint="Main filebrowser module handler"{
 		if( structKeyExists( flash.get( "fileBrowser", {} ), "filterType") ){
 			rc.filterType = flash.get("fileBrowser").filterType;
 		}
-		// clean callback
+		// clean filterType
 		rc.filterType = antiSamy.clean( rc.filterType );
+		// settings
+		if( structKeyExists( flash.get( "fileBrowser", {} ), "settings") ){
+			prc.fbsettings = flash.get("fileBrowser").settings;
+		}
 
 		if(!flash.exists("filebrowser")){
-			var filebrowser = {callback=rc.callback,cancelCallback=rc.cancelCallback,filterType=rc.filterType};
+			var filebrowser = {callback=rc.callback,cancelCallback=rc.cancelCallback,filterType=rc.filterType,settings=prc.fbsettings};
 			flash.put("filebrowser",filebrowser);
 		}
 
 		// keep flash backs
 		flash.keep("filebrowser");
 	}
-
 }
