@@ -25,6 +25,8 @@
 			</fileset>
 		</zip>
 		<delete file="./filebrowser/README.txt" />
+		<delete file="./filebrowser/license.txt" />
+		<delete file="./filebrowser/APACHE_LICENSE.TXT" />
 	</target>
 
 </project>
