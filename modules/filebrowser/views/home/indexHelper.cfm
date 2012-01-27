@@ -91,7 +91,7 @@ function fbContextActions(action,el,pos){
 		case "download"  : fbDownload(); break;
 		</cfif>
 		<cfif len(rc.callback)>
-		case "select" 	 : fbSelect(); break;
+		case "select" 	 : fbChoose(); break;
 		</cfif>
 	}
 }

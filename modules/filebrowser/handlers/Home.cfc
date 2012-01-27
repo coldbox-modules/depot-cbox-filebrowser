@@ -484,20 +484,20 @@ component output="false" hint="Main filebrowser module handler"{
 	* Inflate flash params if they exist into the appropriate function variables.
 	*/
 	private function inflateFlashParams(event,rc,prc){
-		// Check for incoming callbacks via flash, else default from incoming rc.
-		if( structKeyExists( flash.get( "fileBrowser", {} ), "callback") ){
+		// Check if callbacks stored in flash.
+		if( structKeyExists( flash.get( "fileBrowser", {} ), "callback") and len( flash.get("fileBrowser").callback ) ){
 			rc.callback = flash.get("fileBrowser").callback;
 		}
 		// clean callback
 		rc.callBack = antiSamy.clean( rc.callback );
 		// cancel callback
-		if( structKeyExists( flash.get( "fileBrowser", {} ), "cancelCallback") ){
+		if( structKeyExists( flash.get( "fileBrowser", {} ), "cancelCallback") and len( flash.get("fileBrowser").cancelCallback ) ){
 			rc.cancelCallback = flash.get("fileBrowser").cancelCallback;
 		}
 		// clean callback
 		rc.cancelCallback = antiSamy.clean( rc.cancelCallback );
 		// filterType
-		if( structKeyExists( flash.get( "fileBrowser", {} ), "filterType") ){
+		if( structKeyExists( flash.get( "fileBrowser", {} ), "filterType") and len( flash.get("fileBrowser").filterType ) ){
 			rc.filterType = flash.get("fileBrowser").filterType;
 		}
 		// clean filterType
@@ -508,7 +508,7 @@ component output="false" hint="Main filebrowser module handler"{
 		}
 		
 		if(!flash.exists("filebrowser")){
-			var filebrowser = {callback=rc.callback,cancelCallback=rc.cancelCallback,filterType=rc.filterType,settings=prc.fbsettings};
+			var filebrowser = {callback=rc.callback, cancelCallback=rc.cancelCallback, filterType=rc.filterType, settings=prc.fbsettings};
 			flash.put("filebrowser",filebrowser);
 		}
 

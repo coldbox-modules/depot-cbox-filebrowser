@@ -51,9 +51,12 @@ www.coldbox.org | www.luismajano.com | www.ortussolutions.com
 
 			<!--- Download --->
 			<cfif prc.fbSettings.allowDownload>
-			<a href="javascript:fbDownload()" title="Download File"><img src="#prc.fbModRoot#/includes/images/download.png"  border="0"></a>&nbsp;
+			<a href="javascript:fbDownload()" title="Download File"><img src="#prc.fbModRoot#/includes/images/download.png"  border="0"></a>&nbsp;&nbsp;
 			</cfif>
-
+			
+			<!--- Quick View --->
+			<a href="javascript:fbQuickView()" title="QuickView"><img src="#prc.fbModRoot#/includes/images/camera.png"  border="0"></a>&nbsp;&nbsp;
+			
 			<!--- Sorting --->
 			#html.label(field="fbSorting",content="Sort By: ")#
 			#html.select(name="fbSorting",options="Name,Size,LastModified",selectedValue=prc.fbPreferences.sorting)#
@@ -177,7 +180,6 @@ www.coldbox.org | www.luismajano.com | www.ortussolutions.com
 			<input type="hidden" name="selectedItemType" id="selectedItemType" value="file">
 
 			<div id="statusButtons">
-				Cancel: #rc.cancelCallBack#, Choose: #rc.callBack#
 				<!--- Cancel Button --->
 				<cfif len(rc.cancelCallback)>
 					<input type="button" id="bt_cancel" value="Cancel" onClick="#rc.cancelCallback#()"> &nbsp;
@@ -234,4 +236,8 @@ www.coldbox.org | www.luismajano.com | www.ortussolutions.com
 		</cfif>
 	</ul>
 </div>
+
+Cancel: #rc.cancelCallBack#, Choose: #rc.callBack#
+<cfdump var="#flash.getScope()#">
+
 </cfoutput>
