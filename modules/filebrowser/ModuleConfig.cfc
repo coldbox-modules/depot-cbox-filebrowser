@@ -1,4 +1,10 @@
 <!---
+********************************************************************************
+Copyright Since 2005 ColdBox Framework by Luis Majano and Ortus Solutions, Corp
+www.coldbox.org | www.luismajano.com | www.ortussolutions.com
+********************************************************************************
+Author      :	Luis Majano
+Description :
 File Browser can be used by either navigating to it or rendering it out as a widget:
 
 #runEvent(event="filebrowser:home",eventArguments={widget=true})#
@@ -17,7 +23,7 @@ The arguments you can use are:
 	this.author 			= "Ortus Solutions";
 	this.webURL 			= "http://www.ortussolutions.com";
 	this.description 		= "A file-directory browser and selector";
-	this.version			= "1.0";
+	this.version			= "1.1";
 	// If true, looks for views in the parent first, if not found, then in the module. Else vice-versa
 	this.viewParentLookup 	= true;
 	// If true, looks for layouts in the parent first, if not found, then in module. Else vice-versa

@@ -1,4 +1,8 @@
 /**
+ *********************************************************************************
+ * Copyright since 2005 ColdBox Framework by Luis Majano and Ortus Solutions, Corp
+ * www.coldbox.org | www.luismajano.com | www.ortussolutions.com
+ *********************************************************************************
  * This callbacks js is used to place common editor, OS software callbacks so they
  * can be reused.  You can also modify it to add your own.
  */

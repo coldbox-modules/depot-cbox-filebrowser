@@ -1,3 +1,14 @@
+/**
+********************************************************************************
+Copyright Since 2005 ColdBox Framework by Luis Majano and Ortus Solutions, Corp
+www.coldbox.org | www.luismajano.com | www.ortussolutions.com
+********************************************************************************
+Author      :	Luis Majano
+Description :
+
+This is the main controller of events for the filebrowser
+----------------------------------------------------------------------->
+*/
 component output="false" hint="Main filebrowser module handler"{
 
 	// DI
@@ -7,17 +18,30 @@ component output="false" hint="Main filebrowser module handler"{
 
 	function preHandler(event,currentAction){
 		var prc = event.getCollection(private=true);
-		// place root in prc and also module settings
-		prc.fbModRoot	 = event.getModuleRoot();
-		// if the settings exist in flash, use those
+		
+		// Detect Module Name Override or default it
+		if( settingExists("filebrowser_module_name") ){
+			prc.fbModuleName = getSetting("filebrowser_module_name");
+		}
+		else{
+			prc.fbModuleName = "filebrowser";
+		}
+		
+		// Setup the Module Root And Entry Point
+		prc.fbModRoot 		= getModuleSettings( prc.fbModuleName ).mapping;
+		prc.fbModEntryPoint = getModuleSettings( prc.fbModuleName ).entrypoint;
+		// Duplicate the settings so we can do overrides a-la-carte
+		prc.fbSettings = duplicate( getModuleSettings( prc.fbModuleName ).settings );
+		// Merge Flash Settings if they exist
 		if( structKeyExists( flash.get( "fileBrowser", {} ), "settings") ){
-			prc.fbsettings = flash.get("fileBrowser").settings;
-		} else {
-			// otherwise we duplicate the settings so we can do overrides a-la-carte
-			prc.fbSettings = duplicate( getModuleSettings("filebrowser").settings );
+			mergeSettings(prc.fbSettings, flash.get("fileBrowser").settings);
 		}
 	}
-
+	
+	/**
+	* @widget.hint Determines if this will run as a viewlet or normal MVC
+	* @settings.hint A structure of settings for the filebrowser to be overriden with in the viewlet most likely.
+	*/
 	function index(event,rc,prc,boolean widget=false,struct settings={}){
 		// params
 		event.paramValue("path","");
@@ -25,90 +49,67 @@ component output="false" hint="Main filebrowser module handler"{
 		event.paramValue("cancelCallback","");
 		event.paramValue("filterType","");
 		
+		// exit handlers
+		prc.xehFBBrowser 	= "#prc.fbModEntryPoint#/";
+		prc.xehFBNewFolder 	= "#prc.fbModEntryPoint#createfolder";
+		prc.xehFBRemove 	= "#prc.fbModEntryPoint#remove";
+		prc.xehFBDownload	= "#prc.fbModEntryPoint#download";
+		prc.xehFBUpload		= "#prc.fbModEntryPoint#upload";
+		prc.xehFBRename		= "#prc.fbModEntryPoint#rename";
+
 		// Detect Widget Mode.
 		if(arguments.widget) {
-			// merge the settings structs
-			mergeSetting(event,rc,prc,settings);
-			// clean out the stored settings for this version
-			flash.remove("filebrowser");
+			// merge the settings structs if defined
+			if( !structIsEmpty( arguments.settings ) ){
+				mergeSettings(prc.fbSettings, arguments.settings);
+				// clean out the stored settings for this version as we will use passed in settings.
+				flash.remove("filebrowser");
+			}			
 		}
 
 		// Detect sorting changes
 		detectSorting(event,rc,prc);
 
-		// exit handlers
-		prc.xehFBBrowser 	= "filebrowser/";
-		prc.xehFBNewFolder 	= "filebrowser/createfolder";
-		prc.xehFBRemove 	= "filebrowser/remove";
-		prc.xehFBDownload	= "filebrowser/download";
-		prc.xehFBUpload		= "filebrowser/upload";
-		prc.xehFBRename		= "filebrowser/rename";
-
-		// Load CSS and JS only if not in Ajax Mode
-		if( NOT event.isAjax() ){
-			// Add Main Styles
-			addAsset("#prc.fbModRoot#/includes/css/style.css");
-			addAsset("#prc.fbModRoot#/includes/css/jquery.contextMenu.css");
-
-			// load jquery if needed
-			if( prc.fbSettings.loadJquery ){
-				addAsset("#prc.fbModRoot#/includes/javascript/jquery-1.4.4.min.js");
-			}
-			// Add additional JS
-			addAsset("#prc.fbModRoot#/includes/javascript/jquery.uidivfilter.js");
-			addAsset("#prc.fbModRoot#/includes/javascript/jquery.contextMenu.min.js");
-
-			// uploadify if uploads enabled
-			if( prc.fbSettings.allowUploads ){
-				addAsset("#prc.fbModRoot#/includes/uploadify/uploadify.css");
-				addAsset("#prc.fbModRoot#/includes/uploadify/swfobject.js");
-				addAsset("#prc.fbModRoot#/includes/uploadify/jquery.uploadify.v2.1.4.min.js");
-			}
-			if( prc.fbSettings.loadSelectCallbacks ){
-				addAsset("#prc.fbModRoot#/includes/javascript/fbSelectCallbacks.js");
-			}
-		}
+		// load Assets for filebrowser
+		loadAssets(event,rc,prc);
 
 		// Inflate flash params
 		inflateFlashParams(event,rc,prc);
 		
-		// clean incoming path
-		rc.path = URLDecode( trim( antiSamy.clean( rc.path ) ) );
-		// Store directory root
-		prc.fbDirRoot 	= prc.fbSettings.directoryRoot;
-		prc.fbwebRootPath = getSetting("applicationpath");
+		// Store directory roots and web root
+		prc.fbDirRoot 		= prc.fbSettings.directoryRoot;
+		prc.fbWebRootPath 	= getSetting("applicationPath");
 
-		// Get the current Root
+		// clean incoming path and decode it.
+		rc.path = cleanIncomingPath( URLDecode( trim( antiSamy.clean( rc.path ) ) ) );
+		// Check if the incoming path does not exist so we default to the configuration directory root.
 		if( !len(rc.path) ){
-			prc.fbCurrentRoot = prc.fbSettings.directoryRoot;
+			prc.fbCurrentRoot = cleanIncomingPath( prc.fbSettings.directoryRoot );
 		}
 		else{
 			prc.fbCurrentRoot = rc.path;
 		}
-		prc.fbCurrentRoot = REReplace(prc.fbCurrentRoot,"(/|\\){1,}$","","all");
-		prc.fbCurrentRoot = REReplace(prc.fbCurrentRoot,"\\","/","all");
-
-		prc.fbwebRootPath = REReplace(prc.fbwebRootPath,"(/|\\){1,}$","","all");
-		prc.fbwebRootPath = REReplace(prc.fbwebRootPath,"\\","/","all");
-
-		// Do a safe current root
+		// Web root cleanups
+		prc.fbwebRootPath = cleanIncomingPath(prc.fbwebRootPath);
+		// Do a safe current root for JS
 		prc.fbSafeCurrentRoot = URLEncodedFormat( prc.fbCurrentRoot );
 
-		// traversal test
-		if( prc.fbSettings.traversalSecurity AND NOT findNoCase(prc.fbSettings.directoryRoot, prc.fbCurrentRoot) ){
-			getPlugin("MessageBox").warn("Traversal security exception");
+		// traversal testing
+		if( NOT isTraversalSecure(prc, prc.fbCurrentRoot) ){
+			getPlugin("MessageBox").warn("Traversal security exception!");
 			setNextEvent(prc.xehFBBrowser);
 		}
 
 		// Get storage preferences
 		prc.fbPreferences = getPreferences();
-		prc.fbNameFilter = prc.fbSettings.nameFilter;
+		prc.fbNameFilter  = prc.fbSettings.nameFilter;
 		if (rc.filterType == "Image") {prc.fbNameFilter = prc.fbSettings.imgNameFilter;}
 		if (rc.filterType == "Flash") {prc.fbNameFilter = prc.fbSettings.flashNameFilter;}
+		
 		// get directory listing.
 		prc.fbqListing = directoryList( prc.fbCurrentRoot, false, "query", prc.fbSettings.extensionFilter, "#prc.fbPreferences.sorting#");
 
-		// set view or widget?
+		// set view or render widget?
 		if( arguments.widget ){
 			return renderView(view="home/index",module="filebrowser");
 		}
@@ -116,57 +117,18 @@ component output="false" hint="Main filebrowser module handler"{
 			event.setView(view="home/index",noLayout=event.isAjax());
 		}
 	}
-
+	
 	/**
-	* Get preferences
+	* Determines if this is a safe path call or a traversal security exception
 	*/
-	private function getPreferences(){
-		// Get preferences
-		var prefs = cookieStorage.getVar("fileBrowserPrefs","");
-		// not found or not JSON setup defaults
-		if( !len(prefs) OR NOT isJSON(prefs) ){
-			prefs = {
-				sorting = "name"
-			};
-			cookieStorage.setVar("fileBrowserPrefs",serializeJSON(prefs));
+	private boolean function isTraversalSecure(required prc, required targetPath){
+		// Do some cleanup just in case in the incoming root.
+		if( prc.fbSettings.traversalSecurity AND NOT findNoCase(prc.fbSettings.directoryRoot, arguments.targetPath) ){
+			return false;
 		}
-		else{
-			prefs = deserializeJSON( prefs );
-		}
-
-		return prefs;
+		return true;
 	}
-
-	/**
-	* Detect Sorting
-	*/
-	private function detectSorting(event,rc,prc){
-		if( structKeyExists(rc,"sorting") AND reFindNoCase("^(name|size|lastModified)$",rc.sorting) ){
-			var prefs = getPreferences();
-			if( prefs.sorting NEQ rc.sorting ){
-				prefs.sorting = rc.sorting;
-				cookieStorage.setVar("fileBrowserPrefs",serializeJSON(prefs));
-			}
-		}
-	}
-
-	/**
-	* Merge module settings and arguments settings
-	*/
-	private function mergeSetting(event,rc,prc,struct settings={}){
-		var appliedSetting = {};
-		structAppend(appliedSetting, prc.fbSettings, true);
-		structAppend(appliedSetting, arguments.settings, true);
-		// clean directory root
-		if(structKeyExists(arguments.settings,"directoryRoot")) {
-			appliedSetting.directoryRoot = REReplace(appliedSetting.directoryRoot,"\\","/","all");
-			if (right(appliedSetting.directoryRoot,1) EQ "/") {
-				appliedSetting.directoryRoot = left(appliedSetting.directoryRoot,len(appliedSetting.directoryRoot)-1);
-			}
-		}
-		prc.fbSettings = appliedSetting;
-	}
-
+	
 	/**
 	* Creates folders asynchrounsly return json information:
 	*/
@@ -188,11 +150,19 @@ component output="false" hint="Main filebrowser module handler"{
 		}
 
 		// clean incoming path and names
-		rc.path = URLDecode( trim( antiSamy.clean( rc.path ) ) );
+		rc.path = cleanIncomingPath( URLDecode( trim( antiSamy.clean( rc.path ) ) ) );
 		rc.dName = URLDecode( trim( antiSamy.clean( rc.dName ) ) );
 		if( !len(rc.path) OR !len(rc.dName) ){
 			data.errors = true;
 			data.messages = "The path and name sent are invalid!";
+			event.renderData(data=data,type="json");
+			return;
+		}
+		
+		// Traversal Security
+		if( NOT isTraversalSecure(prc, rc.path) ){
+			data.errors = true;
+			data.messages = "Traversal Exception: The path you sent is outside of the valid application path!";
 			event.renderData(data=data,type="json");
 			return;
 		}
@@ -232,10 +202,18 @@ component output="false" hint="Main filebrowser module handler"{
 		}
 
 		// clean incoming path and names
-		rc.path = URLDecode( trim( antiSamy.clean( rc.path ) ) );
+		rc.path = cleanIncomingPath( URLDecode( trim( antiSamy.clean( rc.path ) ) ) );
 		if( !len(rc.path) ){
 			data.errors = true;
 			data.messages = "The path sent is invalid!";
+			event.renderData(data=data,type="json");
+			return;
+		}
+		
+		// Traversal Security
+		if( NOT isTraversalSecure(prc, rc.path) ){
+			data.errors = true;
+			data.messages = "Traversal Exception: The path you sent is outside of the valid application path!";
 			event.renderData(data=data,type="json");
 			return;
 		}
@@ -280,10 +258,18 @@ component output="false" hint="Main filebrowser module handler"{
 		}
 
 		// clean incoming path and names
-		rc.path = URLDecode( trim( antiSamy.clean( rc.path ) ) );
+		rc.path = cleanIncomingPath( URLDecode( trim( antiSamy.clean( rc.path ) ) ) );
 		if( !len(rc.path) ){
 			data.errors = true;
 			data.messages = "The path sent is invalid!";
+			event.renderData(data=data,type="json");
+			return;
+		}
+		
+		// Traversal Security
+		if( NOT isTraversalSecure(prc, rc.path) ){
+			data.errors = true;
+			data.messages = "Traversal Exception: The path you sent is outside of the valid application path!";
 			event.renderData(data=data,type="json");
 			return;
 		}
@@ -316,11 +302,19 @@ component output="false" hint="Main filebrowser module handler"{
 		event.paramValue("name","");
 
 		// clean incoming path and names
-		rc.path = URLDecode( trim( antiSamy.clean( rc.path ) ) );
+		rc.path = cleanIncomingPath( URLDecode( trim( antiSamy.clean( rc.path ) ) ) );
 		rc.name = URLDecode( trim( antiSamy.clean( rc.name ) ) );
 		if( !len(rc.path) OR !len(rc.name) ){
 			data.errors = true;
 			data.messages = "The path and/or name sent are invalid!";
+			event.renderData(data=data,type="json");
+			return;
+		}
+		
+		// Traversal Security
+		if( NOT isTraversalSecure(prc, rc.path) ){
+			data.errors = true;
+			data.messages = "Traversal Exception: The path you sent is outside of the valid application path!";
 			event.renderData(data=data,type="json");
 			return;
 		}
@@ -352,13 +346,13 @@ component output="false" hint="Main filebrowser module handler"{
 		// param values
 		event.paramValue("folder","");
 
-		// clean incoming path
-		rc.folder = URLDecode( trim( antiSamy.clean( rc.folder ) ) );
+		// clean incoming path for destination directory
+		rc.folder = cleanIncomingPath( URLDecode( trim( antiSamy.clean( rc.folder ) ) ) );
 
 		// traversal test
-		if( prc.fbSettings.traversalSecurity AND NOT findNoCase(prc.fbSettings.directoryRoot, rc.folder) ){
+		if( NOT isTraversalSecure(prc, rc.folder) ){
 			data.errors = true;
-			data.messages = "Traversal security activated, path not allowed!";
+			data.messages = "Traversal security activated, upload folder path not allowed!";
 			log.error(data.messages,rc);
 			event.renderData(data=data,type="json");
 			return;
@@ -394,12 +388,103 @@ component output="false" hint="Main filebrowser module handler"{
 		// render stuff out
 		event.renderData(data=data,type="json");
 	}
+	
+	/************************************** PRIVATE *********************************************/
+	
+	/**
+	* Cleanup of incoming path
+	*/
+	private function cleanIncomingPath(required inPath){
+		// Do some cleanup just in case on incoming path
+		inPath = REReplace(inPath,"(/|\\){1,}$","","all");
+		inPath = REReplace(inPath,"\\","/","all");
+		return inPath;
+	}
+	
+	/**
+	* Load Assets for FileBrowser
+	*/
+	private function loadAssets(event,rc,prc){
+		// Load CSS and JS only if not in Ajax Mode
+		if( NOT event.isAjax() ){
+			// Add Main Styles
+			addAsset("#prc.fbModRoot#/includes/css/style.css");
+			addAsset("#prc.fbModRoot#/includes/css/jquery.contextMenu.css");
+
+			// load jquery if needed
+			if( prc.fbSettings.loadJquery ){
+				addAsset("#prc.fbModRoot#/includes/javascript/jquery-1.4.4.min.js");
+			}
+			// Add additional JS
+			addAsset("#prc.fbModRoot#/includes/javascript/jquery.uidivfilter.js");
+			addAsset("#prc.fbModRoot#/includes/javascript/jquery.contextMenu.min.js");
+
+			// uploadify if uploads enabled
+			if( prc.fbSettings.allowUploads ){
+				addAsset("#prc.fbModRoot#/includes/uploadify/uploadify.css");
+				addAsset("#prc.fbModRoot#/includes/uploadify/swfobject.js");
+				addAsset("#prc.fbModRoot#/includes/uploadify/jquery.uploadify.v2.1.4.min.js");
+			}
+			if( prc.fbSettings.loadSelectCallbacks ){
+				addAsset("#prc.fbModRoot#/includes/javascript/fbSelectCallbacks.js");
+			}
+		}
+	}
+	
+	/**
+	* Get preferences
+	*/
+	private function getPreferences(){
+		// Get preferences
+		var prefs = cookieStorage.getVar("fileBrowserPrefs","");
+		// not found or not JSON setup defaults
+		if( !len(prefs) OR NOT isJSON(prefs) ){
+			prefs = {
+				sorting = "name"
+			};
+			cookieStorage.setVar("fileBrowserPrefs",serializeJSON(prefs));
+		}
+		else{
+			prefs = deserializeJSON( prefs );
+		}
+
+		return prefs;
+	}
+
+	/**
+	* Detect Sorting
+	*/
+	private function detectSorting(event,rc,prc){
+		if( structKeyExists(rc,"sorting") AND reFindNoCase("^(name|size|lastModified)$",rc.sorting) ){
+			var prefs = getPreferences();
+			if( prefs.sorting NEQ rc.sorting ){
+				prefs.sorting = rc.sorting;
+				cookieStorage.setVar("fileBrowserPrefs",serializeJSON(prefs));
+			}
+		}
+	}
+
+	/**
+	* Merge module settings and custom settings
+	*/
+	private struct function mergeSettings(struct oldSettings,struct settings={}){
+		// Mrege Settings
+		structAppend(arguments.oldSettings, arguments.settings, true);
+		// clean directory root
+		if(structKeyExists(arguments.settings,"directoryRoot")) {
+			arguments.oldSettings.directoryRoot = REReplace(arguments.settings.directoryRoot,"\\","/","all");
+			if (right(arguments.oldSettings.directoryRoot,1) EQ "/") {
+				arguments.oldSettings.directoryRoot = left(arguments.oldSettings.directoryRoot,len(arguments.oldSettings.directoryRoot)-1);
+			}
+		}
+		return oldSettings;
+	}
 
 	/**
 	* Inflate flash params if they exist into the appropriate function variables.
 	*/
 	private function inflateFlashParams(event,rc,prc){
-		// Check for incoming callback via flash, else default from incoming rc.
+		// Check for incoming callbacks via flash, else default from incoming rc.
 		if( structKeyExists( flash.get( "fileBrowser", {} ), "callback") ){
 			rc.callback = flash.get("fileBrowser").callback;
 		}
@@ -421,13 +506,13 @@ component output="false" hint="Main filebrowser module handler"{
 		if( structKeyExists( flash.get( "fileBrowser", {} ), "settings") ){
 			prc.fbsettings = flash.get("fileBrowser").settings;
 		}
-
+		
 		if(!flash.exists("filebrowser")){
 			var filebrowser = {callback=rc.callback,cancelCallback=rc.cancelCallback,filterType=rc.filterType,settings=prc.fbsettings};
 			flash.put("filebrowser",filebrowser);
 		}
 
-		// keep flash backs
+		// keep flash backs for relocations.
 		flash.keep("filebrowser");
 	}
 }
