@@ -111,7 +111,7 @@ component output="false" hint="Main filebrowser module handler"{
 
 		// set view or render widget?
 		if( arguments.widget ){
-			return renderView(view="home/index",module="filebrowser");
+			return renderView(view="home/index",module=prc.fbModuleName);
 		}
 		else{
 			event.setView(view="home/index",noLayout=event.isAjax());
