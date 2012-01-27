@@ -51,11 +51,11 @@ component output="false" hint="Main filebrowser module handler"{
 		
 		// exit handlers
 		prc.xehFBBrowser 	= "#prc.fbModEntryPoint#/";
-		prc.xehFBNewFolder 	= "#prc.fbModEntryPoint#createfolder";
-		prc.xehFBRemove 	= "#prc.fbModEntryPoint#remove";
-		prc.xehFBDownload	= "#prc.fbModEntryPoint#download";
-		prc.xehFBUpload		= "#prc.fbModEntryPoint#upload";
-		prc.xehFBRename		= "#prc.fbModEntryPoint#rename";
+		prc.xehFBNewFolder 	= "#prc.fbModEntryPoint#/createfolder";
+		prc.xehFBRemove 	= "#prc.fbModEntryPoint#/remove";
+		prc.xehFBDownload	= "#prc.fbModEntryPoint#/download";
+		prc.xehFBUpload		= "#prc.fbModEntryPoint#/upload";
+		prc.xehFBRename		= "#prc.fbModEntryPoint#/rename";
 
 		// Detect Widget Mode.
 		if(arguments.widget) {

@@ -63,7 +63,12 @@
 		logBox = {
 			// Define Appenders
 			appenders = {
-				coldboxTracer = { class="coldbox.system.logging.appenders.ColdboxTracerAppender" }
+				coldboxTracer = { class="coldbox.system.logging.appenders.ColdboxTracerAppender" },
+				files={class="coldbox.system.logging.appenders.RollingFileAppender",
+					properties = {
+						filename = "fileBrowser", filePath="logs"
+					}
+				}
 			},
 			// Root Logger
 			root = { levelmax="DEBUG", appenders="*" },
