@@ -237,7 +237,7 @@ www.coldbox.org | www.luismajano.com | www.ortussolutions.com
 	</ul>
 </div>
 
-Cancel: #rc.cancelCallBack#, Choose: #rc.callBack#
-<cfdump var="#flash.getScope()#">
+<!---Cancel: #rc.cancelCallBack#, Choose: #rc.callBack#
+<cfdump var="#flash.getScope()#">--->
 
 </cfoutput>
