@@ -171,6 +171,7 @@
 			<input type="hidden" name="selectedItemType" id="selectedItemType" value="file">
 
 			<div id="statusButtons">
+				Cancel: #rc.cancelCallBack#, Choose: #rc.callBack#
 				<!--- Cancel Button --->
 				<cfif len(rc.cancelCallback)>
 					<input type="button" id="bt_cancel" value="Cancel" onClick="#rc.cancelCallback#()"> &nbsp;

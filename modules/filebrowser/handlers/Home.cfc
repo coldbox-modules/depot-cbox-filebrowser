@@ -24,11 +24,12 @@ component output="false" hint="Main filebrowser module handler"{
 		event.paramValue("callback","");
 		event.paramValue("cancelCallback","");
 		event.paramValue("filterType","");
-
+		
+		// Detect Widget Mode.
 		if(arguments.widget) {
-			//merge the settings structs
+			// merge the settings structs
 			mergeSetting(event,rc,prc,settings);
-			//clean out the stored settings for this version
+			// clean out the stored settings for this version
 			flash.remove("filebrowser");
 		}
 
@@ -64,13 +65,13 @@ component output="false" hint="Main filebrowser module handler"{
 				addAsset("#prc.fbModRoot#/includes/uploadify/jquery.uploadify.v2.1.4.min.js");
 			}
 			if( prc.fbSettings.loadSelectCallbacks ){
-				addAsset("#prc.fbModRoot#/includes/javascript/selectCallbacks.js");
+				addAsset("#prc.fbModRoot#/includes/javascript/fbSelectCallbacks.js");
 			}
 		}
 
 		// Inflate flash params
 		inflateFlashParams(event,rc,prc);
-
+		
 		// clean incoming path
 		rc.path = URLDecode( trim( antiSamy.clean( rc.path ) ) );
 		// Store directory root
@@ -358,6 +359,7 @@ component output="false" hint="Main filebrowser module handler"{
 		if( prc.fbSettings.traversalSecurity AND NOT findNoCase(prc.fbSettings.directoryRoot, rc.folder) ){
 			data.errors = true;
 			data.messages = "Traversal security activated, path not allowed!";
+			log.error(data.messages,rc);
 			event.renderData(data=data,type="json");
 			return;
 		}
