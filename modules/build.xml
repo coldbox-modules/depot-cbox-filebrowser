@@ -15,6 +15,8 @@
 		<!-- Copy Readme -->	
       	<copy todir="./filebrowser">
         	<fileset file="../README.txt" />
+      		<fileset file="../license.txt" />
+        	<fileset file="../APACHE_LICENSE.TXT" />
         </copy>
 		<zip destfile="${build.label}.zip">
 			<fileset dir=".">
