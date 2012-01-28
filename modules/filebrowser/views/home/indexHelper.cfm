@@ -14,7 +14,7 @@ function $getBackPath(inPath){
 }
 function validQuickView(ext){
 	if( listFindNoCase("png,jpg,jpeg,bmp,gif",ext) ){ return "true"; }
-	return "false";	
+	return "false";
 }
 function getImageFile(ext){
 	switch(arguments.ext){
@@ -72,7 +72,7 @@ $(document).ready(function() {
 	$fileBrowser.find("##fbQuickFilter").keyup(function(){
 		$.uiDivFilter( $(".filterDiv"), this.value);
 	})
-	
+
 });
 function fbCloseQuickView(){
 	$quickView.slideUp();
@@ -214,7 +214,8 @@ $(document).ready(function() {
   $('##file_upload').uploadify({
     'uploader'  : '#prc.fbModRoot#/includes/uploadify/uploadify.swf',
     'cancelImg' : '#prc.fbModRoot#/includes/uploadify/cancel.png',
-   	'script'    : '#event.buildLink(prc.xehFBUpload)#?folder=#prc.fbSafeCurrentRoot#&#$safe(session.URLToken)#',
+   	'script'    : '#event.buildLink(prc.xehFBUpload)#?#$safe(session.URLToken)#',
+	'scriptData': {"folder" : "#prc.fbSafeCurrentRoot#"},
     'auto'      : true,
 	'multi'  	: #prc.fbSettings.uploadify.multi#,
 	fileDesc	: '#prc.fbSettings.uploadify.fileDesc#',
