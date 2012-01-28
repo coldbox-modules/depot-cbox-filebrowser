@@ -214,8 +214,8 @@ $(document).ready(function() {
   $('##file_upload').uploadify({
     'uploader'  : '#prc.fbModRoot#/includes/uploadify/uploadify.swf',
     'cancelImg' : '#prc.fbModRoot#/includes/uploadify/cancel.png',
-   	'script'    : '#event.buildLink(prc.xehFBUpload)#?#$safe(session.URLToken)#',
-	'scriptData': {"folder" : "#prc.fbSafeCurrentRoot#"},
+   	'script'    : '#event.buildLink(prc.xehFBUpload)#?#$safe(session.URLToken)#&folder=#prc.fbSafeCurrentRoot#',
+	'scriptData': {path: '#prc.fbSafeCurrentRoot#'},
     'auto'      : true,
 	'multi'  	: #prc.fbSettings.uploadify.multi#,
 	fileDesc	: '#prc.fbSettings.uploadify.fileDesc#',
