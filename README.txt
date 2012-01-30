@@ -59,9 +59,18 @@ SYSTEM REQUIREMENTS
 ********************************************************************************
 CHANGELOG
 ********************************************************************************
+== Version 1.2 ==
+# Fixes to j2ee sessions
+
+== Version 1.1 ==
+# Context menus
+# Quick Views
+# css cleanups
+# More cool icons
+
 == Version 1.0 ==
 
-* Initial Release
+# Initial Release
 
 ----
 
