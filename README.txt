@@ -59,6 +59,9 @@ SYSTEM REQUIREMENTS
 ********************************************************************************
 CHANGELOG
 ********************************************************************************
+== Version 1.3 ==
+# Fix to selection to be relative for better migration of sites thanks to Mike McKellip
+
 == Version 1.2 ==
 # Fixes to j2ee sessions
 
