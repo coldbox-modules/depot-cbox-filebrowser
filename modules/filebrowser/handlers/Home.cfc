@@ -230,6 +230,10 @@ component output="false" hint="Main filebrowser module handler"{
 
 		// removal
 		try{
+			// Announce it
+			iData.path = rc.path;
+			announceInterception("fb_preFileRemoval",iData);
+			
 			if( fileExists( rc.path ) ){
 				fileUtils.removeFile( rc.path );
 			}
@@ -238,6 +242,11 @@ component output="false" hint="Main filebrowser module handler"{
 			}
 			data.errors = false;
 			data.messages = "'#rc.path#' removed successfully!";
+			
+			// Announce it
+			iData.path = rc.path;
+			iData.directoryName = rc.dName;
+			announceInterception("fb_postFileRemoval",iData);
 		}
 		catch(Any e){
 			data.errors = true;

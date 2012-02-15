@@ -116,7 +116,9 @@ The arguments you can use are:
 			"fb_preTitleBar", "fb_postTitleBar" ,"fb_preLocationBar" , "fb_postLocationBar", "fb_preBottomBar", "fb_postBottomBar", 
 			"fb_preFileListing","fb_postFileListing","fb_preUploadBar","fb_postUploadBar", "fb_preQuickViewBar", "fb_postQuickViewBar",
 			// folder creation
-			"fb_postFolderCreation","fb_preFolderCreation"
+			"fb_postFolderCreation","fb_preFolderCreation",
+			// removals
+			"fb_preFileRemoval", "fb_postFileRemoval"
 			] )
 		};
 
