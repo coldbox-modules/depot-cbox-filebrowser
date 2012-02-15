@@ -59,6 +59,11 @@ SYSTEM REQUIREMENTS
 ********************************************************************************
 CHANGELOG
 ********************************************************************************
+== Version 1.4 ==
+# Fixes to  missing interception points
+# Changed all interception points to be namespaced with fb_ (Please update your interceptors)
+# Addition of new events: fb_postFolderCreation, fb_preFolderCreation
+
 == Version 1.3 ==
 # Fix to selection to be relative for better migration of sites thanks to Mike McKellip
 

@@ -112,7 +112,12 @@ The arguments you can use are:
 
 		// Custom Declared Points
 		interceptorSettings = {
-			customInterceptionPoints = "preTitleBar,postTitleBar,preLocationBar,postLocationBar,preBottomBar,postBottomBar,preFileListing,postFileListing"
+			customInterceptionPoints = arrayToList( [
+			"fb_preTitleBar", "fb_postTitleBar" ,"fb_preLocationBar" , "fb_postLocationBar", "fb_preBottomBar", "fb_postBottomBar", 
+			"fb_preFileListing","fb_postFileListing","fb_preUploadBar","fb_postUploadBar", "fb_preQuickViewBar", "fb_postQuickViewBar",
+			// folder creation
+			"fb_postFolderCreation","fb_preFolderCreation"
+			] )
 		};
 
 		// Custom Declared Interceptors

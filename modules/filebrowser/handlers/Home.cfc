@@ -137,10 +137,12 @@ component output="false" hint="Main filebrowser module handler"{
 			errors = false,
 			messages = ""
 		};
+		var iData = {};
+		
 		// param value
 		event.paramValue("path","");
 		event.paramValue("dName","");
-
+		
 		// Verify credentials else return invalid
 		if( !prc.fbSettings.createFolders ){
 			data.errors = true;
@@ -169,9 +171,17 @@ component output="false" hint="Main filebrowser module handler"{
 
 		// creation
 		try{
+			// Announce it
+			iData.path = rc.path;
+			iData.directoryName = rc.dName;
+			announceInterception("fb_preFolderCreation",iData);
+		
 			fileUtils.directoryCreate( rc.path & "/" & rc.dName );
 			data.errors = false;
 			data.messages = "Folder '#rc.path#/#rc.dName#' created successfully!";
+			
+			// Announce it
+			announceInterception("fb_postFolderCreation",iData);
 		}
 		catch(Any e){
 			data.errors = true;
