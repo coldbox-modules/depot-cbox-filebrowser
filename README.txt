@@ -68,7 +68,7 @@ CHANGELOG
 	"fb_preFileRename", "fb_postFileRename",
 	"fb_preFileDownload", "fb_postFileDownload",
 	"fb_preFileUpload", "fb_postFileUpload"
-
+# Fix for retaining flashed settings on an operation performed.
 
 == Version 1.3 ==
 # Fix to selection to be relative for better migration of sites thanks to Mike McKellip
