@@ -137,7 +137,6 @@ component output="false" hint="Main filebrowser module handler"{
 			errors = false,
 			messages = ""
 		};
-		var iData = {};
 		
 		// param value
 		event.paramValue("path","");
@@ -172,8 +171,10 @@ component output="false" hint="Main filebrowser module handler"{
 		// creation
 		try{
 			// Announce it
-			iData.path = rc.path;
-			iData.directoryName = rc.dName;
+			var iData = {
+				path = rc.path,
+				directoryName = rc.dName
+			};
 			announceInterception("fb_preFolderCreation",iData);
 		
 			fileUtils.directoryCreate( rc.path & "/" & rc.dName );
@@ -231,7 +232,9 @@ component output="false" hint="Main filebrowser module handler"{
 		// removal
 		try{
 			// Announce it
-			iData.path = rc.path;
+			var iData = {
+				path = rc.path
+			};
 			announceInterception("fb_preFileRemoval",iData);
 			
 			if( fileExists( rc.path ) ){
@@ -295,9 +298,18 @@ component output="false" hint="Main filebrowser module handler"{
 
 		// download
 		try{
+			// Announce it
+			var iData = {
+				path = rc.path
+			};
+			announceInterception("fb_preFileDownload",iData);
+			
 			fileUtils.sendFile(file=rc.path);
 			data.errors = false;
 			data.messages = "'#rc.path#' sent successfully!";
+			
+			// Announce it
+			announceInterception("fb_postFileDownload",iData);
 		}
 		catch(Any e){
 			data.errors = true;
@@ -340,6 +352,13 @@ component output="false" hint="Main filebrowser module handler"{
 
 		// rename
 		try{
+			// Announce it
+			var iData = {
+				original = rc.path,
+				newName = rc.name
+			};
+			announceInterception("fb_preFileRename",iData);
+			
 			if( fileExists( rc.path ) ){
 				fileUtils.renameFile( rc.path, rc.name );
 			}
@@ -348,6 +367,11 @@ component output="false" hint="Main filebrowser module handler"{
 			}
 			data.errors = false;
 			data.messages = "'#rc.path#' renamed successfully!";
+			
+			// Announce it
+			iData.path = rc.path;
+			announceInterception("fb_postFileRename",iData);
+			
 		}
 		catch(Any e){
 			data.errors = true;
@@ -385,17 +409,27 @@ component output="false" hint="Main filebrowser module handler"{
 
 		// upload
 		try{
-			var results = fileUtils.uploadFile(fileField="FILEDATA",
+			// Announce it
+			var iData = {
+				fileField = "FILEDATA",
+				path = rc.path
+			};
+			announceInterception("fb_preFileUpload",iData);
+			
+			iData.results = fileUtils.uploadFile(fileField="FILEDATA",
 											   destination=rc.path,
 											   nameConflict="Overwrite",
 											   accept=prc.fbSettings.acceptMimeTypes);
 			// debug log file
 			if( log.canDebug() ){
-				log.debug("File Uploaded!", results);
+				log.debug("File Uploaded!", iData.results);
 			}
 			data.errors = false;
 			data.messages = "File uploaded successfully!";
-			log.info(data.messages, results);
+			log.info(data.messages, iData.results);
+			
+			// Announce it
+			announceInterception("fb_postFileUpload",iData);
 		}
 		catch(Any e){
 			data.errors = true;

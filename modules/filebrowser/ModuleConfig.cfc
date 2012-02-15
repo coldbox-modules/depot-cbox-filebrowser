@@ -118,7 +118,13 @@ The arguments you can use are:
 			// folder creation
 			"fb_postFolderCreation","fb_preFolderCreation",
 			// removals
-			"fb_preFileRemoval", "fb_postFileRemoval"
+			"fb_preFileRemoval", "fb_postFileRemoval",
+			// renameing
+			"fb_preFileRename", "fb_postFileRename",
+			// downloads
+			"fb_preFileDownload", "fb_postFileDownload",
+			// Uploads
+			"fb_preFileUpload", "fb_postFileUpload"
 			] )
 		};
 

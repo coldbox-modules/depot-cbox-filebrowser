@@ -62,7 +62,13 @@ CHANGELOG
 == Version 1.4 ==
 # Fixes to  missing interception points
 # Changed all interception points to be namespaced with fb_ (Please update your interceptors)
-# Addition of new events: fb_postFolderCreation, fb_preFolderCreation
+# Addition of new events: 
+	"fb_postFolderCreation","fb_preFolderCreation",
+	"fb_preFileRemoval", "fb_postFileRemoval",
+	"fb_preFileRename", "fb_postFileRename",
+	"fb_preFileDownload", "fb_postFileDownload",
+	"fb_preFileUpload", "fb_postFileUpload"
+
 
 == Version 1.3 ==
 # Fix to selection to be relative for better migration of sites thanks to Mike McKellip
