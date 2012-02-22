@@ -59,6 +59,10 @@ SYSTEM REQUIREMENTS
 ********************************************************************************
 CHANGELOG
 ********************************************************************************
+== Version 1.5 ==
+# Fixes to flash keeping of settings
+# Fixes to announcements exceptions
+
 == Version 1.4 ==
 # Fixes to  missing interception points
 # Changed all interception points to be namespaced with fb_ (Please update your interceptors)
