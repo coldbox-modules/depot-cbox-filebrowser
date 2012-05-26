@@ -59,6 +59,12 @@ SYSTEM REQUIREMENTS
 ********************************************************************************
 CHANGELOG
 ********************************************************************************
+== Version 1.6 ==
+# double click selections
+# css updates
+# icon updates
+# New grid and list views
+
 == Version 1.5 ==
 # Fixes to flash keeping of settings
 # Fixes to announcements exceptions
