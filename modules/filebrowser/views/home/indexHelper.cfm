@@ -98,6 +98,7 @@ function fbContextActions(action,el,pos){
 		<cfif len(rc.callback)>
 		case "select" 	 : fbChoose(); break;
 		</cfif>
+		case "url"	 : fbUrl(); break;
 	}
 }
 function fbListTypeChange(listType){
@@ -170,6 +171,16 @@ function fbRename(){
 			fbRefresh();
 		},"json");
 	}
+}
+function fbUrl(){
+	// check selection
+	var sPath = $selectedItem.val();
+	if( !sPath.length ){ alert("Please select a file first."); return; }
+	// get ID
+	var thisID 		= $selectedItemID.val();
+	var target 		= $("##"+thisID);
+	// prompt the URL
+	var newName  = prompt("Url:", "#event.buildLink('')#" + target.attr("data-relurl") );
 }
 <!--- Create Folders --->
 <cfif prc.fbSettings.createFolders>
