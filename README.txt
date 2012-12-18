@@ -59,6 +59,11 @@ SYSTEM REQUIREMENTS
 ********************************************************************************
 CHANGELOG
 ********************************************************************************
+== Version 1.7 ==
+# Upgraded to latest uploadify
+# css updates
+# added copy URL to context menu
+
 == Version 1.6 ==
 # double click selections
 # css updates
