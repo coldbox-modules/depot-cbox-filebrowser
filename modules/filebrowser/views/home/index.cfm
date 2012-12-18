@@ -293,7 +293,7 @@ www.coldbox.org | www.luismajano.com | www.ortussolutions.com
 			<a href="##download">Download</a>
 		</li>
 		</cfif>
-		<li class="">
+		<li class="link">
 			<a href="##url">URL</a>
 		</li>
 	</ul>
