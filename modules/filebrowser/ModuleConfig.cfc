@@ -23,7 +23,7 @@ The arguments you can use are:
 	this.author 			= "Ortus Solutions";
 	this.webURL 			= "http://www.ortussolutions.com";
 	this.description 		= "A file-directory browser and selector";
-	this.version			= "1.7";
+	this.version			= "1.8";
 	// If true, looks for views in the parent first, if not found, then in the module. Else vice-versa
 	this.viewParentLookup 	= true;
 	// If true, looks for layouts in the parent first, if not found, then in module. Else vice-versa
@@ -69,6 +69,13 @@ The arguments you can use are:
 			loadSelectCallbacks = true,
 			// Quick View image width in pixels
 			quickViewWidth = 400,
+			// HTML Uploads
+			html5uploads = {
+				// max file size in mbytes
+				maxfilesize = 100,
+				// max multiple upload files
+				maxfiles = 25	
+			},
 			// Uploadify Settings
 			uploadify = {
 				fileDesc = "All Files",
@@ -76,7 +83,9 @@ The arguments you can use are:
 				multi 	 = true,
 				sizeLimit = 0,
 				customJSONOptions = ""
-			}
+			},
+			useMediaPath = false,
+			mediaPath = "__media"
 		};
 
 		// clean directory root
@@ -124,7 +133,7 @@ The arguments you can use are:
 			// downloads
 			"fb_preFileDownload", "fb_postFileDownload",
 			// Uploads
-			"fb_preFileUpload", "fb_postFileUpload"
+			"fb_preFileUpload", "fb_postFileUpload", "fb_onFileUploadError"
 			] )
 		};
 
