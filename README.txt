@@ -59,6 +59,13 @@ SYSTEM REQUIREMENTS
 ********************************************************************************
 CHANGELOG
 ********************************************************************************
+== Version 1.8 ==
+# Upgraded to latest uploadify
+# Upgraded js libraries
+# Upgraded UI look and feel
+# Added HTML upload via drag and drop
+# Added new file upload events: "fb_preFileUpload", "fb_postFileUpload", "fb_onFileUploadError"
+
 == Version 1.7 ==
 # Upgraded to latest uploadify
 # css updates

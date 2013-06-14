@@ -90,8 +90,20 @@ www.coldbox.org | www.luismajano.com | www.ortussolutions.com
 			#announceInterception("fb_postQuickViewBar")#
 		</div>
 
+		<!--- Uploader Message --->
+		<div id="uploaderHelp">Drag and drop files to upload!</div>
+			
 		<!--- Show the File Listing --->
 		<div id="fileListing">
+			
+			<!---Clear Fix --->
+			<div style="clear:both"></div>
+			
+			<!---Upload Message Bar --->
+			<div id="fileUploaderMessage">
+				Drop files here to upload!
+			</div>
+			
 			#announceInterception("fb_preFileListing")#
 			<!--- Messagebox --->
 			#getPlugin("MessageBox").renderit()#
@@ -125,6 +137,7 @@ www.coldbox.org | www.luismajano.com | www.ortussolutions.com
 				<!--- URL used for selection --->
 				<cfset plainURL = prc.fbCurrentRoot & "/" & prc.fbqListing.name>
 				<cfset relURL = $getUrlRelativeToPath(prc.fbwebRootPath,plainURL)>
+				<cfset mediaURL = ((prc.fbSettings.useMediaPath) ? $getURLMediaPath(prc.fbDirRoot,plainURL) : relURL)>
 
 				<!---Grid or List --->
 				<cfif prc.fbPreferences.listType eq "grid">
@@ -156,7 +169,7 @@ www.coldbox.org | www.luismajano.com | www.ortussolutions.com
 									 data-type="file"
 									 data-name="#prc.fbqListing.Name#"
 									 data-fullURL="#plainURL#"
-									 data-relURL="#relURL#"
+									 data-relURL="#mediaURL#"
 									 data-lastModified="#prc.fbqListing.dateLastModified#"
 									 data-size="#numberFormat(prc.fbqListing.size/1024)#"
 									 data-quickview="#validQuickView( listLast(prc.fbQListing.name,".") )#"
@@ -202,7 +215,7 @@ www.coldbox.org | www.luismajano.com | www.ortussolutions.com
 							 data-type="file"
 							 data-name="#prc.fbqListing.Name#"
 							 data-fullURL="#plainURL#"
-							 data-relURL="#relURL#"
+							 data-relURL="#mediaURL#"
 							 data-lastModified="#prc.fbqListing.dateLastModified#"
 							 data-size="#numberFormat(prc.fbqListing.size/1024)#"
 							 data-quickview="#validQuickView( listLast(prc.fbQListing.name,".") )#"
@@ -221,7 +234,7 @@ www.coldbox.org | www.luismajano.com | www.ortussolutions.com
 			</cfif>
 			#announceInterception("fb_postFileListing")#
 		</div> <!--- end fileListing --->
-
+		
 		<!--- Location Bar --->
 		<div id="locationBar">
 			#announceInterception("fb_preLocationBar")#
